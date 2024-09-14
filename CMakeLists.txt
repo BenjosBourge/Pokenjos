@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 
-set(PROJECT_NAME ecs)
+set(PROJECT_NAME Pokenjos)
 project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 14)

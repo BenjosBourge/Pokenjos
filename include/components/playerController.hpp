@@ -14,4 +14,9 @@ public:
     ~PlayerController();
 
     bool _isMoving;
+    int _tileX;
+    int _tileY;
+    int _initialTileX;
+    int _initialTileY;
+    float _timerMove;
 };

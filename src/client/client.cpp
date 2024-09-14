@@ -6,7 +6,7 @@
 
 void Coordinator::initWindow()
 {
-    _window = new sf::RenderWindow(sf::VideoMode(800, 600), "ECS");//, sf::Style::Fullscreen);
+    _window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Pokenjos", sf::Style::Fullscreen);
     _window->setFramerateLimit(240);
 }
 

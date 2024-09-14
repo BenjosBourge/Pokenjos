@@ -33,10 +33,23 @@ void createPlayer(std::shared_ptr<Coordinator> coordinator)
 {
     Entity player = coordinator->createEntity();
 
-    coordinator->addComponent<Transform>(player, Transform(400, 300, 1, 1));
-    coordinator->addComponent<SpriteRenderer>(player, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32));
+    coordinator->addComponent<Transform>(player, Transform(10 * 48 + 24, 10 * 48 + 24, 1, 1));
+    coordinator->addComponent<SpriteRenderer>(player, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 1));
     coordinator->addComponent<Tag>(player, Tag("player"));
     coordinator->addComponent<PlayerController>(player);
+    auto &playerSprite = coordinator->getComponent<SpriteRenderer>(player);
+    playerSprite._color = sf::Color(255, 0, 0);
+}
+
+void createMap(std::shared_ptr<Coordinator> coordinator)
+{
+    for (int i = 0; i < 30; i += 1)
+        for (int j = 0; j < 30; j += 1) {
+            Entity tile = coordinator->createEntity();
+            coordinator->addComponent<Transform>(tile, Transform(i * 48 + 24, j * 48 + 24, 1, 1));
+            coordinator->addComponent<SpriteRenderer>(tile, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 46, 46));
+            coordinator->addComponent<Tag>(tile, Tag("tile"));
+        }
 }
 
 int main()
@@ -47,6 +60,7 @@ int main()
 
 
     //put here your code to instanciate entities
+    createMap(coordinator);
     createPlayer(coordinator);
 
 
