@@ -33,6 +33,7 @@ void SystemManager::init()
     registerSystem<UiButtonSystem>();
     registerSystem<ChildSystem>();
     registerSystem<TextRenderingSystem>();
+    registerSystem<PlayerMovementSystem>();
 }
 
 void SystemManager::entityDestroyed(Entity entity)

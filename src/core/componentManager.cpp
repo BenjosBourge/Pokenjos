@@ -31,6 +31,7 @@ void ComponentManager::init()
     registerComponent<UiButton>();
     registerComponent<Child>();
     registerComponent<Text>();
+    registerComponent<PlayerController>();
 }
 
 void ComponentManager::entityDestroyed(Entity entity)

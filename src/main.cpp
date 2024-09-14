@@ -13,6 +13,7 @@
 #include "../include/core/components/spriteRenderer.hpp"
 #include "../include/core/components/tag.hpp"
 #include "../include/core/components/camera.hpp"
+#include "../include/components/playerController.hpp"
 
 bool isDebug()
 {
@@ -28,6 +29,16 @@ void createCamera(std::shared_ptr<Coordinator> coordinator)
     coordinator->addComponent<Tag>(camera, Tag("camera"));
 }
 
+void createPlayer(std::shared_ptr<Coordinator> coordinator)
+{
+    Entity player = coordinator->createEntity();
+
+    coordinator->addComponent<Transform>(player, Transform(400, 300, 1, 1));
+    coordinator->addComponent<SpriteRenderer>(player, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32));
+    coordinator->addComponent<Tag>(player, Tag("player"));
+    coordinator->addComponent<PlayerController>(player);
+}
+
 int main()
 {
     srand(time(nullptr));
@@ -36,9 +47,7 @@ int main()
 
 
     //put here your code to instanciate entities
-    Entity e = coordinator->createEntity();
-    coordinator->addComponent<Transform>(e, Transform(400, 300, 1, 1));
-    coordinator->addComponent<SpriteRenderer>(e, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32));
+    createPlayer(coordinator);
 
 
     if (serverRunning())
