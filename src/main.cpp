@@ -14,6 +14,7 @@
 #include "../include/core/components/tag.hpp"
 #include "../include/core/components/camera.hpp"
 #include "../include/components/playerController.hpp"
+#include "../include/prefabPokemon.hpp"
 
 bool isDebug()
 {
@@ -64,6 +65,16 @@ int main()
     createPlayer(coordinator);
 
 
+    for (int i = 0; i != NONE_TYPE; i++) {
+        std::cout << "Type: " << static_cast<Type>(i) << std::endl;
+        for (const auto &j : getAllAttacksFromType(static_cast<Type>(i)))
+            std::cout << j._name << std::endl;
+
+        std::cout << std::endl;
+
+    }
+
+
     if (serverRunning())
         return 0;
 
@@ -88,6 +99,7 @@ int main()
                 //std::cout << fps << std::endl;
                 if (fps < 50)
                     std::cerr << "Low fps, Cause:" << coordinator->_highConsumingSystem << " with " << coordinator->_highConsumingTime << "ms per frame" << std::endl;
+                //std::cout << "FPS: " << fps << std::endl;
                 fps = 0;
                 timerFps = 0;
                 //coordinator->_networkManager->_clock.restart();

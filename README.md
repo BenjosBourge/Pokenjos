@@ -1,28 +1,13 @@
-# ECS-template
-A simple ECS template to fork.
+# Pokenjos
 
-Using SFML for rendering and input handling.
+Pretty simple to explain: I wanted to code a little fun game for my friends.
+I wanted to start exploring the ROM of Pokemon Red, but I need a first step in the world
+of pokemon, so I started by making my own version of pokemon before reading the sourcecode.
 
-## To know
-When compiling, it will download the SFML on its own.
+This is not a serious project, just a fun project to learn a bit about the game mechanics.
 
-
-The coordinator is the main class that will handle the ECS. It will create the entities, components and systems.
-There is 4 managers:
-- The Entity Manager
-- The Component Manager
-- The System Manager
-- The Network Manager
+My goal is also to play Pokemon online with my friends, so if you want to download to 
+play with yours, feel free to do so.
 
 
-Some optimizations are made to make the ECS faster:
-- When drawing, the system will optimize on its own the Y-axis system of rendering.
-- When colliding, the boxes are stored in chunks.
-
-Never destroy entities, kill them instead.
-
-Tags are also useful. You can call:
-- `getEntitiesFromTag("tag")` to get all the entities with the tag "tag"
-- `getEntityFromTag("tag")` to get the first entity with the tag "tag"
-
-When using network, `makePacket()` will be useful.
+I will probably change pokemon names, types, moves, and other things to make it more fun for me.

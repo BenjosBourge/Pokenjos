@@ -8,10 +8,10 @@
 PlayerController::PlayerController()
 {
     _isMoving = false;
-    _tileX = 0;
-    _tileY = 0;
-    _initialTileX = 0;
-    _initialTileY = 0;
+    _tileX = 10;
+    _tileY = 10;
+    _initialTileX = 10;
+    _initialTileY = 10;
     _timerMove = 0.0f;
 }
 

@@ -61,6 +61,13 @@ void PlayerMovementSystem::update(float deltaTime)
                 transform._y = finalPosition.y;
             }
         }
+
+        auto cameraEntity = coordinator->getEntityFromTag("camera");
+        if (cameraEntity != NULL_ENTITY) {
+            auto &cameraTransform = coordinator->getComponent<Transform>(cameraEntity);
+            cameraTransform._x = transform._x;
+            cameraTransform._y = transform._y;
+        }
     }
 }
 
