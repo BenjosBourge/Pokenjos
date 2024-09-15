@@ -53,6 +53,23 @@ void createMap(std::shared_ptr<Coordinator> coordinator)
         }
 }
 
+void printPokemon(Pokemon pokemon)
+{
+    std::cout << "Pokemon: " << pokemon._name << std::endl;
+    std::cout << "Level: " << pokemon._level << std::endl;
+    std::cout << "HP: " << pokemon._currentHP << "/" << pokemon._currentMaxHP << std::endl;
+
+    std::cout << "Attack: " << pokemon._currentAttack << std::endl;
+    std::cout << "Defense: " << pokemon._currentDefense << std::endl;
+    std::cout << "Special Attack: " << pokemon._currentSpecialAttack << std::endl;
+    std::cout << "Special Defense: " << pokemon._currentSpecialDefense << std::endl;
+    std::cout << "Speed: " << pokemon._currentSpeed << std::endl;
+
+    for (int i = 0; i < 4; i += 1) {
+        std::cout << "Attack: " << pokemon._attacks[i]._name << std::endl;
+    }
+}
+
 int main()
 {
     srand(time(nullptr));
@@ -64,14 +81,14 @@ int main()
     createMap(coordinator);
     createPlayer(coordinator);
 
+    Pokemon pokemon = createPokemon(BULBASAUR, 1);
+    printPokemon(pokemon);
 
-    for (int i = 0; i != NONE_TYPE; i++) {
-        std::cout << "Type: " << static_cast<Type>(i) << std::endl;
-        for (const auto &j : getAllAttacksFromType(static_cast<Type>(i)))
-            std::cout << j._name << std::endl;
 
-        std::cout << std::endl;
-
+    for (int i = 0; i < 10; i += 1) {
+        pokemon.gainXP(10000);
+        std::cout << std::endl << "Gained 10000 XP" << std::endl;
+        printPokemon(pokemon);
     }
 
 

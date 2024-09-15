@@ -59,7 +59,19 @@ public:
     Pokemon(std::string name, int id, int hp, int attack, int defense, int specialAttack, int specialDefense, int speed, Type type1, Type type2);
     ~Pokemon();
 
+    void resetStats();
+
+    void changeToPokemon(int id);
+    void gainXP(int xp);
+    void levelUp();
+
     int _currentHP;
+    int _currentMaxHP;
+    int _currentAttack;
+    int _currentDefense;
+    int _currentSpecialAttack;
+    int _currentSpecialDefense;
+    int _currentSpeed;
     int _level;
     int _xp;
     int _xpToNextLevel;
@@ -79,4 +91,9 @@ public:
 
     std::array<Attack, 4> _attacks;
     std::array<int, 4> _currentPP;
+
+    /*in prefab*/
+    Attack getAttackAtLevel(int level);
+    Pokemon getPokemon(int id);
+    int getEvolutionFromId(int id, int level);
 };

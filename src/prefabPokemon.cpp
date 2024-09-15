@@ -20,10 +20,30 @@ Pokemon createPokemon(PokemonId id, int level)
     Pokemon pokemon = getPokemonFromId(id);
 
     pokemon._level = level;
-    pokemon._currentHP = pokemon._hp;
+    pokemon._xp = level * level * level;
+    pokemon._xpToNextLevel = (level + 1) * (level + 1) * (level + 1);
 
     //set the attacks
+    auto table = tablePokemonAttack[pokemon._id];
+    for (auto & i : table)
+        if (i.first <= level) {
+            bool found = false;
+            for (int j = 0; j < 4; j += 1) {
+                if (pokemon._attacks[j]._id == -1) {
+                    pokemon._attacks[j] = getAttackFromId(i.second);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                int index = rand() % 6;
 
+                if (index < 4)
+                    pokemon._attacks[index] = getAttackFromId(i.second);
+            }
+        }
+    pokemon.resetStats();
+    pokemon._currentHP = pokemon._currentMaxHP;
     return pokemon;
 }
 
@@ -54,4 +74,34 @@ std::vector<Attack> getAllAttacksFromType(Type type)
             attacks.push_back(i);
 
     return attacks;
+}
+
+
+/*
+ * These functions are here because otherwise compilation wouldn't work.
+ * Don't know why.
+ */
+
+int Pokemon::getEvolutionFromId(int id, int level)
+{
+    for (const auto & i : evolutionLvlTable)
+        if (i.first == id && i.second <= level) {
+            return id + 1;
+        }
+    return -1;
+}
+
+Attack Pokemon::getAttackAtLevel(int level)
+{
+    auto table = tablePokemonAttack[static_cast<PokemonId>(_id)];
+    for (auto & i : table)
+        if (i.first == _level) {
+            return getAttackFromId(i.second);
+        }
+    return Attack();
+}
+
+Pokemon Pokemon::getPokemon(int id)
+{
+    return getPokemonFromId(static_cast<PokemonId>(id));
 }

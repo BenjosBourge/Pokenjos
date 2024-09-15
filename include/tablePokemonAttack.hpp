@@ -12,7 +12,7 @@
  * When a Pokemon levels up, it can learn the level 0 attack.
  */
 
-const std::pair<int, AttackId> tableBulbasaur[] =
+const std::vector<std::pair<int, AttackId>> tableBulbasaur =
         {
                 {1, TACKLE},
                 {1, GROWL},
@@ -31,7 +31,7 @@ const std::pair<int, AttackId> tableBulbasaur[] =
                 {36, SOLAR_BEAM}
         };
 
-const std::pair<int, AttackId> tableIvysaur[] =
+const std::vector<std::pair<int, AttackId>> tableIvysaur =
         {
                 {1, TACKLE},
                 {1, GROWL},
@@ -50,7 +50,7 @@ const std::pair<int, AttackId> tableIvysaur[] =
                 {50, SOLAR_BEAM}
         };
 
-const std::pair<int, AttackId> tableVenusaur[] =
+const std::vector<std::pair<int, AttackId>> tableVenusaur =
         {
                 //{0, PETAL_BLIZZARD},
                 {1, PETAL_DANCE},
@@ -71,7 +71,7 @@ const std::pair<int, AttackId> tableVenusaur[] =
                 {58, SOLAR_BEAM}
         };
 
-const std::pair<int, AttackId> tableCharmander[] =
+const std::vector<std::pair<int, AttackId>> tableCharmander =
         {
                 {1, SCRATCH},
                 {1, GROWL},
@@ -87,7 +87,7 @@ const std::pair<int, AttackId> tableCharmander[] =
                 //{40, FLARE_BLITZ}
         };
 
-const std::pair<int, AttackId> tableCharmeleon[] =
+const std::vector<std::pair<int, AttackId>> tableCharmeleon =
         {
                 {1, SCRATCH},
                 {1, GROWL},
@@ -102,7 +102,7 @@ const std::pair<int, AttackId> tableCharmeleon[] =
                 //{54, FLARE_BLITZ}
         };
 
-const std::pair<int, AttackId> tableCharizard[] =
+const std::vector<std::pair<int, AttackId>> tableCharizard =
         {
                 //{0, DRAGON_SLASH}
                 //{1, DRAGON_CLAW},
@@ -120,7 +120,7 @@ const std::pair<int, AttackId> tableCharizard[] =
                 //{62, FLARE_BLITZ}
         };
 
-const std::pair<int, AttackId> tableSquirtle[] =
+const std::vector<std::pair<int, AttackId>> tableSquirtle =
         {
                 {1, TACKLE},
                 {1, TAIL_WHIP},
@@ -138,7 +138,7 @@ const std::pair<int, AttackId> tableSquirtle[] =
                 //{36, WAVE_CRASH}
         };
 
-const std::pair<int, AttackId> tableWartortle[] =
+const std::vector<std::pair<int, AttackId>> tableWartortle =
         {
                 {1, TACKLE},
                 {1, TAIL_WHIP},
@@ -156,7 +156,7 @@ const std::pair<int, AttackId> tableWartortle[] =
                 //{50, WAVE_CRASH}
         };
 
-const std::pair<int, AttackId> tableBlastoise[] =
+const std::vector<std::pair<int, AttackId>> tableBlastoise =
         {
                 //{0, FLASH_CANNON},
                 {1, TACKLE},
@@ -173,4 +173,17 @@ const std::pair<int, AttackId> tableBlastoise[] =
                 //{42, IRON_DEFENSE},
                 {49, HYDRO_PUMP},
                 //{56, WAVE_CRASH}
+        };
+
+const std::vector<std::pair<int, AttackId>> tablePokemonAttack[] =
+        {
+                tableBulbasaur,
+                tableIvysaur,
+                tableVenusaur,
+                tableCharmander,
+                tableCharmeleon,
+                tableCharizard,
+                tableSquirtle,
+                tableWartortle,
+                tableBlastoise
         };

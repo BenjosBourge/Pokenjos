@@ -10,18 +10,28 @@
  */
 
 const Pokemon pokemonArray[] = {
-        Pokemon("Bulbasaur", 0, 1, 1, 1, 1, 1, 1, GRASS_TYPE, NONE_TYPE),
-        Pokemon("Ivysaur", 1, 1, 1, 1, 1, 1, 1, GRASS_TYPE, NONE_TYPE),
-        Pokemon("Venusaur", 2, 1, 1, 1, 1, 1, 1, GRASS_TYPE, FAIRY_TYPE),
-        Pokemon("Charmander", 3, 1, 1, 1, 1, 1, 1, FIRE_TYPE, NONE_TYPE),
-        Pokemon("Charmeleon", 4, 1, 1, 1, 1, 1, 1, FIRE_TYPE, NONE_TYPE),
-        Pokemon("Charizard", 5, 1, 1, 1, 1, 1, 1, FIRE_TYPE, DRAGON_TYPE),
-        Pokemon("Squirtle", 6, 1, 1, 1, 1, 1, 1, WATER_TYPE, NONE_TYPE),
-        Pokemon("Wartortle", 7, 1, 1, 1, 1, 1, 1, WATER_TYPE, NONE_TYPE),
-        Pokemon("Blastoise", 8, 1, 1, 1, 1, 1, 1, WATER_TYPE, STEEL_TYPE)
+        Pokemon("Bulbasaur", 0, 45, 49, 49, 65, 65, 45, GRASS_TYPE, NONE_TYPE),
+        Pokemon("Ivysaur", 1, 60, 62, 63, 80, 80, 60, GRASS_TYPE, NONE_TYPE),
+        Pokemon("Venusaur", 2, 80, 82, 83, 100, 100, 80, GRASS_TYPE, FAIRY_TYPE),
+        Pokemon("Charmander", 3, 39, 52, 43, 60, 50, 65, FIRE_TYPE, NONE_TYPE),
+        Pokemon("Charmeleon", 4, 58, 64, 58, 80, 65, 80, FIRE_TYPE, NONE_TYPE),
+        Pokemon("Charizard", 5, 78, 84, 78, 109, 85, 100, FIRE_TYPE, DRAGON_TYPE),
+        Pokemon("Squirtle", 6, 44, 48, 65, 50, 64, 43, WATER_TYPE, NONE_TYPE),
+        Pokemon("Wartortle", 7, 59, 63, 80, 65, 80, 58, WATER_TYPE, NONE_TYPE),
+        Pokemon("Blastoise", 8, 79, 83, 100, 85, 105, 78, WATER_TYPE, STEEL_TYPE)
+};
+
+const std::vector<std::pair<PokemonId, int>> evolutionLvlTable = {
+        {BULBASAUR, 16},
+        {IVYSAUR, 32},
+        {CHARMANDER, 16},
+        {CHARMELEON, 36},
+        {SQUIRTLE, 16},
+        {WARTORTLE, 36}
 };
 
 Pokemon getPokemonFromId(PokemonId id);
+Pokemon createPokemon(PokemonId id, int level);
 
 
 /*
