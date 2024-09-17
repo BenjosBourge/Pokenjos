@@ -15,5 +15,4 @@
 #include "systems/childSystem.hpp"
 #include "systems/textRenderingSystem.hpp"
 #include "../systems/playerMovementSystem.hpp"
-
-
+#include "../systems/pokemonFightingSystem.hpp"

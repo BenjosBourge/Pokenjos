@@ -19,4 +19,6 @@
 #include "components/text.hpp"
 #include "../components/playerController.hpp"
 #include "../components/pokemon.hpp"
+#include "../components/trainer.hpp"
+#include "../components/match.hpp"
 

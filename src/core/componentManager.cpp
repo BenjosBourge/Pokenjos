@@ -33,6 +33,8 @@ void ComponentManager::init()
     registerComponent<Text>();
     registerComponent<PlayerController>();
     registerComponent<Pokemon>();
+    registerComponent<Trainer>();
+    registerComponent<Match>();
 }
 
 void ComponentManager::entityDestroyed(Entity entity)
