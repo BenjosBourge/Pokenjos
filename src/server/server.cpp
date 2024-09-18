@@ -2,6 +2,7 @@
  * ECS by Benjamin Bourge *
  *------------------------*/
 
+#include <csignal>
 #include "../../include/core/coordinator.hpp"
 
 void Coordinator::initWindow()

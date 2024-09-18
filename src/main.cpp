@@ -21,6 +21,8 @@
 #include "../include/core/components/uiButton.hpp"
 #include "../include/core/components/boxCollider.hpp"
 #include "../include/core/components/interactionBoxCollider.hpp"
+#include "../include/matchMethods.hpp"
+#include "../include/core/components/text.hpp"
 
 bool isDebug()
 {
@@ -80,93 +82,6 @@ void printPokemon(Pokemon pokemon)
 }
 
 
-void match_startAnimation(Entity match, float deltaTime)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    auto &matchComponent = coordinator->getComponent<Match>(match);
-
-    Entity playerSprite = matchComponent._spritePlayer;
-    Entity enemySprite = matchComponent._spriteOpponent;
-
-    auto &playerSpriteTransform = coordinator->getComponent<Transform>(playerSprite);
-    auto &enemySpriteTransform = coordinator->getComponent<Transform>(enemySprite);
-
-    float progression = matchComponent._timeAnimation / 2.0f;
-    playerSpriteTransform._x = 1920/2 - 400 - 800 * progression;
-    enemySpriteTransform._x = 1920/2 + 400 + 800 * progression;
-}
-
-void match_attackAnimation(Entity match, float deltaTime)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-
-    //put here animation for attack
-}
-
-void match_showAttacks(Entity match);
-
-void match_attackAnimationFinished(Entity match)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    auto &matchComponent = coordinator->getComponent<Match>(match);
-
-    match_showAttacks(match);
-}
-
-void match_launchAttack(Entity self)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    Entity match = coordinator->getEntityFromTag("match");
-
-    auto &matchComponent = coordinator->getComponent<Match>(match);
-    auto &trainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersPlayer[0]);
-    auto &enemyTrainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersOpponent[0]);
-
-    matchComponent._timeAnimation = 3.f;
-    matchComponent.setAnimation(match_attackAnimation, match_attackAnimationFinished);
-
-    std::vector<Entity> entities = coordinator->getEntitiesFromTag("attack");
-    for (auto &entity : entities)
-        coordinator->killEntity(entity);
-}
-
-void match_showAttacks(Entity match)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    auto &matchComponent = coordinator->getComponent<Match>(match);
-    auto &trainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersPlayer[0]);
-
-    for (int i = 0; i < 4; i += 1) {
-        auto attack = trainerComponent._pokemons[0]._attacks[i];
-
-        if (attack._id == -1)
-            break;
-
-        std::cout << i << ": " << attack._name << std::endl;
-
-        Entity attackEntity = coordinator->createEntity();
-        int x = 1920/2 - 480 + 960 * (i%2);
-        int y = 1080/2 + 225 + 200 * (i/2);
-
-        coordinator->addComponent<Transform>(attackEntity, Transform(x, y, 29.4, 5.8));
-        coordinator->addComponent<SpriteRenderer>(attackEntity, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
-        coordinator->addComponent<Tag>(attackEntity, Tag("attack"));
-        coordinator->addComponent<UserInterface>(attackEntity);
-        coordinator->addComponent<UiButton>(attackEntity, UiButton(match_launchAttack));
-        auto &uiButton = coordinator->getComponent<UiButton>(attackEntity);
-        uiButton.setZoomWhenHovered(true, coordinator->getComponent<Transform>(attackEntity));
-        coordinator->addComponent<InteractionBoxCollider>(attackEntity, InteractionBoxCollider(29.4 * 32, 5.8 * 32, 0, 0, true));
-    }
-}
-
-void match_startAnimationFinished(Entity match)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    auto &matchComponent = coordinator->getComponent<Match>(match);
-
-    match_showAttacks(match);
-}
-
 int main()
 {
     srand(time(nullptr));
@@ -191,7 +106,7 @@ int main()
     trainerComponent._name = "Benjamin";
     trainerComponent._money = 1000;
 
-    Pokemon pokemon = createPokemon(BULBASAUR, 5);
+    Pokemon pokemon = createPokemon(CHARIZARD, 100);
     trainerComponent._pokemons[0] = pokemon;
 
 
@@ -201,7 +116,7 @@ int main()
     enemyTrainerComponent._name = "Julien";
     enemyTrainerComponent._money = 1000;
 
-    Pokemon enemyPokemon = createPokemon(CHARMANDER, 5);
+    Pokemon enemyPokemon = createPokemon(BLASTOISE, 100);
     enemyTrainerComponent._pokemons[0] = enemyPokemon;
 
 
@@ -226,6 +141,12 @@ int main()
     coordinator->addComponent<SpriteRenderer>(MenuSprite, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 3));
     auto &MenuSpriteComponent = coordinator->getComponent<SpriteRenderer>(MenuSprite);
     MenuSpriteComponent._color = sf::Color(150, 150, 150);
+
+    Entity TextMenu = coordinator->createEntity();
+    coordinator->addComponent<Transform>(TextMenu, Transform(1920/2 - 400, 1080/2 + 250, 62, 16));
+    coordinator->addComponent<UserInterface>(TextMenu);
+    coordinator->addComponent<Tag>(TextMenu, Tag("textMenu"));
+    coordinator->addComponent<Text>(TextMenu, Text("", 64, sf::Color::White));
 
 
 
