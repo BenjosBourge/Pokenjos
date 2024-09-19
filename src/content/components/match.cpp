@@ -18,12 +18,16 @@ Match::Match()
 
     _spritePlayer = NULL_ENTITY;
     _spriteOpponent = NULL_ENTITY;
+    _spritePlayerBase = NULL_ENTITY;
+    _spriteOpponentBase = NULL_ENTITY;
 
     _state = MATCH_STATE_START;
 
     _timeAnimation = 0.0f;
     _animation = nullptr;
     _animationEnded = nullptr;
+
+    _loopingTimer = 0.0f;
 }
 
 Match::~Match()

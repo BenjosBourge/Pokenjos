@@ -29,10 +29,10 @@ void ChildSystem::update(float deltaTime)
             auto &transform = getCoordinator()->getComponent<Transform>(entity);
             auto &parentTransform = getCoordinator()->getComponent<Transform>(child._parent);
 
-            transform._x = parentTransform._x + child._xOffset * parentTransform._width / child._ratioScale;
-            transform._y = parentTransform._y + child._yOffset * parentTransform._height / child._ratioScale;
-            transform._width = parentTransform._width * child._ratioScale;
-            transform._height = parentTransform._height * child._ratioScale;
+            transform._x = parentTransform._x + child._xOffset * (parentTransform._width * child._ratioScale.x) / transform._width;
+            transform._y = parentTransform._y + child._yOffset * (parentTransform._height * child._ratioScale.y) / transform._height;
+            transform._width = parentTransform._width * child._ratioScale.x;
+            transform._height = parentTransform._height * child._ratioScale.y;
         }
 
         if (child._syncOpacity)

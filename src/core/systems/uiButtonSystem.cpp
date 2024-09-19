@@ -52,10 +52,16 @@ void UiButtonSystem::update(float deltaTime)
         uiButton._firstFrameClicked = false;
 
         if (uiButton._functionClicked != nullptr) {
-            if (mousePos.x >= transform._x - interactionBoxCollider._width / 2
-                && mousePos.x <= transform._x + interactionBoxCollider._width / 2
-                && mousePos.y >= transform._y - interactionBoxCollider._height / 2
-                && mousePos.y <= transform._y + interactionBoxCollider._height / 2) {
+            Entity camera = coordinator->getEntityFromTag("camera");
+            auto &cameraTransform = coordinator->getComponent<Transform>(camera);
+
+            int x = transform._x - cameraTransform._x + 1920 / 2;
+            int y = transform._y - cameraTransform._y + 1080 / 2;
+
+            if (mousePos.x >= x - interactionBoxCollider._width / 2
+                && mousePos.x <= x + interactionBoxCollider._width / 2
+                && mousePos.y >= y - interactionBoxCollider._height / 2
+                && mousePos.y <= y + interactionBoxCollider._height / 2) {
                 uiButton._isHovered = true;
 
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {

@@ -49,11 +49,17 @@ void InteractionCollisionSystem::update(float deltaTime)
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::P) && isDebug() && !isServer()) {
             sf::VertexArray lineStrip(sf::LineStrip, 5);
-            lineStrip[0].position = {transform._x + collisionBox._offsetX - collisionBox._width / 2, transform._y + collisionBox._offsetY - collisionBox._height / 2};
-            lineStrip[1].position = {transform._x + collisionBox._offsetX + collisionBox._width / 2, transform._y + collisionBox._offsetY - collisionBox._height / 2};
-            lineStrip[2].position = {transform._x + collisionBox._offsetX + collisionBox._width / 2, transform._y + collisionBox._offsetY + collisionBox._height / 2};
-            lineStrip[3].position = {transform._x + collisionBox._offsetX - collisionBox._width / 2, transform._y + collisionBox._offsetY + collisionBox._height / 2};
-            lineStrip[4].position = {transform._x + collisionBox._offsetX - collisionBox._width / 2, transform._y + collisionBox._offsetY - collisionBox._height / 2};
+            Entity camera = coordinator->getEntityFromTag("camera");
+            auto& cameraTransform = coordinator->_componentManager->getComponent<Transform>(camera);
+
+            int tx = transform._x + collisionBox._offsetX - cameraTransform._x + 1920/2;
+            int ty = transform._y + collisionBox._offsetY - cameraTransform._y + 1080/2;
+
+            lineStrip[0].position = {tx - collisionBox._width / 2, ty - collisionBox._height / 2};
+            lineStrip[1].position = {tx + collisionBox._width / 2, ty - collisionBox._height / 2};
+            lineStrip[2].position = {tx + collisionBox._width / 2, ty + collisionBox._height / 2};
+            lineStrip[3].position = {tx - collisionBox._width / 2, ty + collisionBox._height / 2};
+            lineStrip[4].position = {tx - collisionBox._width / 2, ty - collisionBox._height / 2};
             lineStrip[0].color = sf::Color::Green;
             lineStrip[1].color = sf::Color::Green;
             lineStrip[2].color = sf::Color::Green;

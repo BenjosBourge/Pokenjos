@@ -7,6 +7,7 @@
 #include <memory>
 #include <queue>
 #include <map>
+#include <SFML/Graphics.hpp>
 #include "../texture.hpp"
 #include "../entity.hpp"
 
@@ -22,6 +23,6 @@ public:
     Entity _parent;
     int _xOffset;
     int _yOffset;
-    float _ratioScale;
+    sf::Vector2f _ratioScale;
     bool _syncOpacity;
 };

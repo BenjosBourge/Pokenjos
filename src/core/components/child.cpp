@@ -11,7 +11,7 @@ Child::Child()
     _parent = NULL_ENTITY;
     _xOffset = 0;
     _yOffset = 0;
-    _ratioScale = 1;
+    _ratioScale = {1, 1};
     _syncOpacity = false;
 }
 
@@ -30,7 +30,7 @@ Child::Child(Entity parent, Entity child) : Child()
 
         _xOffset = transform._x;
         _yOffset = transform._y;
-        _ratioScale = transform._width / parentTransform._width;
+        _ratioScale = {transform._width / parentTransform._width, transform._height / parentTransform._height};
     }
 }
 
@@ -46,7 +46,7 @@ Child::Child(Entity parent, int xOffset, int yOffset, float ratioScale) : Child(
     _parent = parent;
     _xOffset = xOffset;
     _yOffset = yOffset;
-    _ratioScale = ratioScale;
+    _ratioScale = {ratioScale, ratioScale};
 }
 
 Child::~Child()

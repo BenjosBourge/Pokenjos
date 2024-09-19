@@ -33,7 +33,7 @@ void createCamera(std::shared_ptr<Coordinator> coordinator)
 {
     Entity camera = coordinator->createEntity();
 
-    coordinator->addComponent<Transform>(camera, Transform(1920/2, 1080/2, 1, 1));
+    coordinator->addComponent<Transform>(camera, Transform(0, 0, 1, 1));
     coordinator->addComponent<Camera>(camera);
     coordinator->addComponent<Tag>(camera, Tag("camera"));
 }
@@ -121,29 +121,41 @@ int main()
 
 
     Entity playerSprite = coordinator->createEntity();
-    coordinator->addComponent<Transform>(playerSprite, Transform(1920/2, 1080/2 - 100, 5, 5));
+    coordinator->addComponent<Transform>(playerSprite, Transform(0, -100, 5, 5));
     coordinator->addComponent<SpriteRenderer>(playerSprite, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 1));
     coordinator->addComponent<Tag>(playerSprite, Tag("playerSprite"));
 
+    Entity playerSpriteBase = coordinator->createEntity();
+    coordinator->addComponent<Transform>(playerSpriteBase, Transform(0, 40, 5, 5));
+    coordinator->addComponent<SpriteRenderer>(playerSpriteBase, SpriteRenderer(TEXTURE_TYPE_PLAYER_BASE, 204, 30, 0));
+    coordinator->addComponent<Tag>(playerSpriteBase, Tag("playerSpriteBase"));
+
     Entity enemySprite = coordinator->createEntity();
-    coordinator->addComponent<Transform>(enemySprite, Transform(1920/2, 1080/2 - 250, 5, 5));
+    coordinator->addComponent<Transform>(enemySprite, Transform(0, -250, 5, 5));
     coordinator->addComponent<SpriteRenderer>(enemySprite, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 1));
     coordinator->addComponent<Tag>(enemySprite, Tag("enemySprite"));
 
+    Entity enemySpriteBase = coordinator->createEntity();
+    coordinator->addComponent<Transform>(enemySpriteBase, Transform(0, -110, 5, 5));
+    coordinator->addComponent<SpriteRenderer>(enemySpriteBase, SpriteRenderer(TEXTURE_TYPE_ENEMY_BASE, 126, 32, 0));
+    coordinator->addComponent<Tag>(enemySpriteBase, Tag("enemySpriteBase"));
+
     matchComponent._spritePlayer = playerSprite;
     matchComponent._spriteOpponent = enemySprite;
+    matchComponent._spritePlayerBase = playerSpriteBase;
+    matchComponent._spriteOpponentBase = enemySpriteBase;
 
     matchComponent.setAnimation(match_startAnimation, match_startAnimationFinished);
     matchComponent.launchNewMatch({trainer}, {enemyTrainer});
 
     Entity MenuSprite = coordinator->createEntity();
-    coordinator->addComponent<Transform>(MenuSprite, Transform(1920/2, 1080/2 + 355, 62, 16));
+    coordinator->addComponent<Transform>(MenuSprite, Transform(0, 355, 62, 16));
     coordinator->addComponent<SpriteRenderer>(MenuSprite, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 3));
     auto &MenuSpriteComponent = coordinator->getComponent<SpriteRenderer>(MenuSprite);
     MenuSpriteComponent._color = sf::Color(150, 150, 150);
 
     Entity TextMenu = coordinator->createEntity();
-    coordinator->addComponent<Transform>(TextMenu, Transform(1920/2 - 400, 1080/2 + 250, 62, 16));
+    coordinator->addComponent<Transform>(TextMenu, Transform(-400, 250, 62, 16));
     coordinator->addComponent<UserInterface>(TextMenu);
     coordinator->addComponent<Tag>(TextMenu, Tag("textMenu"));
     coordinator->addComponent<Text>(TextMenu, Text("", 64, sf::Color::White));

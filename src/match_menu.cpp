@@ -20,6 +20,7 @@
 #include "../include/core/components/interactionBoxCollider.hpp"
 #include "../include/matchMethods.hpp"
 #include "../include/core/components/text.hpp"
+#include "../include/core/components/child.hpp"
 
 void match_showPokemonInfos()
 {
@@ -28,20 +29,23 @@ void match_showPokemonInfos()
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
     /*Enemy Pokemon*/
+    float pix = -50;
+    float piy = -450;
 
     Entity InfoEnemy = coordinator->createEntity();
-    coordinator->addComponent<Transform>(InfoEnemy, Transform(1920/2 - 50, 1080/2 - 450, 18, 4));
+    coordinator->addComponent<Transform>(InfoEnemy, Transform(pix, piy, 18, 4));
     coordinator->addComponent<SpriteRenderer>(InfoEnemy, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 2));
     coordinator->addComponent<Tag>(InfoEnemy, Tag("InfoEnemy"));
 
-    int lifeBarX = 1920/2 + 40;
-    int lifeBarY = 1080/2 - 420;
+    int lifeBarX = 60;
+    int lifeBarY = 30;
     Entity lifeBarEnemy = coordinator->createEntity();
     coordinator->addComponent<Transform>(lifeBarEnemy, Transform(lifeBarX, lifeBarY, 8, 0.4));
     coordinator->addComponent<SpriteRenderer>(lifeBarEnemy, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 3));
     auto &lifeBarEnemySprite = coordinator->getComponent<SpriteRenderer>(lifeBarEnemy);
     lifeBarEnemySprite._color = sf::Color(0, 255, 0);
     coordinator->addComponent<Tag>(lifeBarEnemy, Tag("InfoEnemy"));
+    coordinator->addComponent<Child>(lifeBarEnemy, Child(InfoEnemy, lifeBarEnemy));
 
     Entity lifeBarEnemyBackground = coordinator->createEntity();
     coordinator->addComponent<Transform>(lifeBarEnemyBackground, Transform(lifeBarX, lifeBarY, 8.2, 0.6));
@@ -49,22 +53,25 @@ void match_showPokemonInfos()
     auto &lifeBarEnemyBackgroundSprite = coordinator->getComponent<SpriteRenderer>(lifeBarEnemyBackground);
     lifeBarEnemyBackgroundSprite._color = sf::Color(0, 0, 0);
     coordinator->addComponent<Tag>(lifeBarEnemyBackground, Tag("InfoEnemy"));
+    coordinator->addComponent<Child>(lifeBarEnemyBackground, Child(InfoEnemy, lifeBarEnemyBackground));
 
     Entity enemyName = coordinator->createEntity();
-    coordinator->addComponent<Transform>(enemyName, Transform(1920/2 - 300, 1080/2 - 510, 18, 4));
+    coordinator->addComponent<Transform>(enemyName, Transform(-250, -60, 18, 4));
     coordinator->addComponent<Text>(enemyName, Text("Enemy", 48));
     coordinator->addComponent<Tag>(enemyName, Tag("InfoEnemy"));
     coordinator->addComponent<UserInterface>(enemyName);
+    coordinator->addComponent<Child>(enemyName, Child(InfoEnemy, enemyName));
     auto &enemyNameText = coordinator->getComponent<Text>(enemyName);
     enemyNameText._color = sf::Color(0, 0, 0);
     auto &enemyTrainer = coordinator->getComponent<Trainer>(matchComponent._trainersOpponent[0]);
     enemyNameText._text = enemyTrainer._pokemons[0]._name;
 
     Entity enemyLevel = coordinator->createEntity();
-    coordinator->addComponent<Transform>(enemyLevel, Transform(1920/2 + 100, 1080/2 - 510, 18, 4));
+    coordinator->addComponent<Transform>(enemyLevel, Transform(150, -60, 18, 4));
     coordinator->addComponent<Text>(enemyLevel, Text("Lvl:", 40));
     coordinator->addComponent<Tag>(enemyLevel, Tag("InfoEnemy"));
     coordinator->addComponent<UserInterface>(enemyLevel);
+    coordinator->addComponent<Child>(enemyLevel, Child(InfoEnemy, enemyLevel));
     auto &enemyLevelText = coordinator->getComponent<Text>(enemyLevel);
     enemyLevelText._color = sf::Color(0, 0, 0);
     enemyLevelText._text += std::to_string(enemyTrainer._pokemons[0]._level);
@@ -73,16 +80,20 @@ void match_showPokemonInfos()
 
     /*Player Pokemon*/
 
+    pix = 180;
+    piy = 10;
+
     Entity InfoPlayer = coordinator->createEntity();
-    coordinator->addComponent<Transform>(InfoPlayer, Transform(1920/2 + 180, 1080/2 + 10, 18, 4));
+    coordinator->addComponent<Transform>(InfoPlayer, Transform(pix, piy, 18, 4));
     coordinator->addComponent<SpriteRenderer>(InfoPlayer, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 2));
     coordinator->addComponent<Tag>(InfoPlayer, Tag("InfoPlayer"));
 
-    lifeBarX = 1920/2 + 270;
-    lifeBarY = 1080/2 + 40;
+    lifeBarX = 60;
+    lifeBarY = 30;
     Entity lifeBarPlayer = coordinator->createEntity();
     coordinator->addComponent<Transform>(lifeBarPlayer, Transform(lifeBarX, lifeBarY, 8, 0.4));
     coordinator->addComponent<SpriteRenderer>(lifeBarPlayer, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 3));
+    coordinator->addComponent<Child>(lifeBarPlayer, Child(InfoPlayer, lifeBarPlayer));
     auto &lifeBarPlayerSprite = coordinator->getComponent<SpriteRenderer>(lifeBarPlayer);
     lifeBarPlayerSprite._color = sf::Color(0, 255, 0);
     coordinator->addComponent<Tag>(lifeBarPlayer, Tag("InfoPlayer"));
@@ -90,25 +101,28 @@ void match_showPokemonInfos()
     Entity lifeBarPlayerBackground = coordinator->createEntity();
     coordinator->addComponent<Transform>(lifeBarPlayerBackground, Transform(lifeBarX, lifeBarY, 8.2, 0.6));
     coordinator->addComponent<SpriteRenderer>(lifeBarPlayerBackground, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 2));
+    coordinator->addComponent<Child>(lifeBarPlayerBackground, Child(InfoPlayer, lifeBarPlayerBackground));
     auto &lifeBarPlayerBackgroundSprite = coordinator->getComponent<SpriteRenderer>(lifeBarPlayerBackground);
     lifeBarPlayerBackgroundSprite._color = sf::Color(0, 0, 0);
     coordinator->addComponent<Tag>(lifeBarPlayerBackground, Tag("InfoPlayer"));
 
     Entity playerName = coordinator->createEntity();
-    coordinator->addComponent<Transform>(playerName, Transform(1920/2 - 80, 1080/2 - 50, 18, 4));
+    coordinator->addComponent<Transform>(playerName, Transform(-250, -60, 18, 4));
     coordinator->addComponent<Text>(playerName, Text("Player", 48));
     coordinator->addComponent<Tag>(playerName, Tag("InfoPlayer"));
     coordinator->addComponent<UserInterface>(playerName);
+    coordinator->addComponent<Child>(playerName, Child(InfoPlayer, playerName));
     auto &playerNameText = coordinator->getComponent<Text>(playerName);
     playerNameText._color = sf::Color(0, 0, 0);
     auto &playerTrainer = coordinator->getComponent<Trainer>(matchComponent._trainersPlayer[0]);
     playerNameText._text = playerTrainer._pokemons[0]._name;
 
     Entity playerLevel = coordinator->createEntity();
-    coordinator->addComponent<Transform>(playerLevel, Transform(1920/2 + 240, 1080/2 - 50, 18, 4));
+    coordinator->addComponent<Transform>(playerLevel, Transform(150, -60, 18, 4));
     coordinator->addComponent<Text>(playerLevel, Text("Lvl:", 40));
     coordinator->addComponent<Tag>(playerLevel, Tag("InfoPlayer"));
     coordinator->addComponent<UserInterface>(playerLevel);
+    coordinator->addComponent<Child>(playerLevel, Child(InfoPlayer, playerLevel));
     auto &playerLevelText = coordinator->getComponent<Text>(playerLevel);
     playerLevelText._color = sf::Color(0, 0, 0);
     playerLevelText._text += std::to_string(playerTrainer._pokemons[0]._level);
@@ -126,22 +140,6 @@ void match_removePokemonInfos()
         coordinator->killEntity(entity);
 }
 
-void match_startAnimation(Entity match, float deltaTime)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    auto &matchComponent = coordinator->getComponent<Match>(match);
-
-    Entity playerSprite = matchComponent._spritePlayer;
-    Entity enemySprite = matchComponent._spriteOpponent;
-
-    auto &playerSpriteTransform = coordinator->getComponent<Transform>(playerSprite);
-    auto &enemySpriteTransform = coordinator->getComponent<Transform>(enemySprite);
-
-    float progression = matchComponent._timeAnimation / 2.0f;
-    playerSpriteTransform._x = 1920/2 - 400 - 800 * progression;
-    enemySpriteTransform._x = 1920/2 + 400 + 800 * progression;
-}
-
 void match_showAttacks(Entity match)
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
@@ -157,8 +155,8 @@ void match_showAttacks(Entity match)
         std::cout << i << ": " << attack._name << std::endl;
 
         Entity attackEntity = coordinator->createEntity();
-        int x = 1920/2 - 480 + 960 * (i%2);
-        int y = 1080/2 + 225 + 200 * (i/2);
+        int x = -480 + 960 * (i%2);
+        int y = 225 + 200 * (i/2);
 
         coordinator->addComponent<Transform>(attackEntity, Transform(x, y, 29.4, 5.8));
         coordinator->addComponent<SpriteRenderer>(attackEntity, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
@@ -170,6 +168,29 @@ void match_showAttacks(Entity match)
         coordinator->addComponent<InteractionBoxCollider>(attackEntity, InteractionBoxCollider(29.4 * 32, 5.8 * 32, 0, 0, true));
     }
 }
+
+void match_startAnimation(Entity match, float deltaTime)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    Entity playerSprite = matchComponent._spritePlayer;
+    Entity enemySprite = matchComponent._spriteOpponent;
+    Entity playerSpriteBase = matchComponent._spritePlayerBase;
+    Entity enemySpriteBase = matchComponent._spriteOpponentBase;
+
+    auto &playerSpriteTransform = coordinator->getComponent<Transform>(playerSprite);
+    auto &enemySpriteTransform = coordinator->getComponent<Transform>(enemySprite);
+    auto &playerSpriteBaseTransform = coordinator->getComponent<Transform>(playerSpriteBase);
+    auto &enemySpriteBaseTransform = coordinator->getComponent<Transform>(enemySpriteBase);
+
+    float progression = matchComponent._timeAnimation / 2.0f;
+    playerSpriteTransform._x = -400 - 800 * progression;
+    enemySpriteTransform._x = 400 + 800 * progression;
+    playerSpriteBaseTransform._x = -400 - 800 * progression;
+    enemySpriteBaseTransform._x = 400 + 800 * progression;
+}
+
 
 void match_startAnimationFinished(Entity match)
 {
