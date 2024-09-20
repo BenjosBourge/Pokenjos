@@ -105,9 +105,8 @@ int main()
     auto &trainerComponent = coordinator->getComponent<Trainer>(trainer);
     trainerComponent._name = "Benjamin";
     trainerComponent._money = 1000;
-
-    Pokemon pokemon = createPokemon(CHARIZARD, 100);
-    trainerComponent._pokemons[0] = pokemon;
+    trainerComponent._id = 0;
+    trainerComponent._pokemons[0] = createPokemon(CHARIZARD, 100);
 
 
     Entity enemyTrainer = coordinator->createEntity();
@@ -115,9 +114,8 @@ int main()
     auto &enemyTrainerComponent = coordinator->getComponent<Trainer>(enemyTrainer);
     enemyTrainerComponent._name = "Julien";
     enemyTrainerComponent._money = 1000;
-
-    Pokemon enemyPokemon = createPokemon(BLASTOISE, 100);
-    enemyTrainerComponent._pokemons[0] = enemyPokemon;
+    enemyTrainerComponent._id = 1;
+    enemyTrainerComponent._pokemons[0] = createPokemon(BLASTOISE, 100);
 
 
     Entity playerSprite = coordinator->createEntity();

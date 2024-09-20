@@ -16,6 +16,7 @@ public:
     Trainer();
     ~Trainer();
 
+    int _id = 0;
     std::string _name;
     std::array<Pokemon, 6> _pokemons;
     int _currentPokemon;

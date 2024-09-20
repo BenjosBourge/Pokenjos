@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <array>
+#include <tuple>
 #include <SFML/Graphics.hpp>
 #include "../core/entity.hpp"
 
@@ -47,6 +48,8 @@ public:
     void setAnimation(void (*animation)(Entity, float), void (*animationEnded)(Entity));
 
     int _state;
+
+    std::vector<std::tuple<Entity, Entity, int>> _attacksOrder;
 
     float _loopingTimer;
 };
