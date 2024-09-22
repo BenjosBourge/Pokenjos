@@ -22,6 +22,27 @@
 #include "../include/core/components/text.hpp"
 #include "../include/core/components/child.hpp"
 
+void match_setLifeBarSize(Entity lifeBar, Entity trainer)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    Entity match = coordinator->getEntityFromTag("match");
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    auto &lifeBarComponent = coordinator->getComponent<Transform>(lifeBar);
+    Pokemon pokemon = coordinator->getComponent<Trainer>(trainer)._pokemons[0];
+
+    lifeBarComponent._width = 8.f * ((float)pokemon._currentHP / (float)pokemon._currentMaxHP);
+    lifeBarComponent._height = 0.4;
+    lifeBarComponent._x = 60.f - (8.f - lifeBarComponent._width) * 0.5f * 32.f;
+    lifeBarComponent._y = 30.f;
+    auto &lifeBarChild = coordinator->getComponent<Child>(lifeBar);
+    auto &parentTransform = coordinator->getComponent<Transform>(lifeBarChild._parent);
+
+    lifeBarChild._xOffset = lifeBarComponent._x;
+    lifeBarChild._yOffset = lifeBarComponent._y;
+    lifeBarChild._ratioScale = {lifeBarComponent._width / parentTransform._width, lifeBarComponent._height / parentTransform._height};
+}
+
 void match_showPokemonInfos()
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
@@ -44,21 +65,22 @@ void match_showPokemonInfos()
     coordinator->addComponent<SpriteRenderer>(lifeBarEnemy, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 3));
     auto &lifeBarEnemySprite = coordinator->getComponent<SpriteRenderer>(lifeBarEnemy);
     lifeBarEnemySprite._color = sf::Color(0, 255, 0);
-    coordinator->addComponent<Tag>(lifeBarEnemy, Tag("InfoEnemy"));
+    coordinator->addComponent<Tag>(lifeBarEnemy, Tag("lifebar_1"));
     coordinator->addComponent<Child>(lifeBarEnemy, Child(InfoEnemy, lifeBarEnemy));
+    match_setLifeBarSize(lifeBarEnemy, matchComponent._trainersOpponent[0]);
 
     Entity lifeBarEnemyBackground = coordinator->createEntity();
     coordinator->addComponent<Transform>(lifeBarEnemyBackground, Transform(lifeBarX, lifeBarY, 8.2, 0.6));
     coordinator->addComponent<SpriteRenderer>(lifeBarEnemyBackground, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 2));
     auto &lifeBarEnemyBackgroundSprite = coordinator->getComponent<SpriteRenderer>(lifeBarEnemyBackground);
     lifeBarEnemyBackgroundSprite._color = sf::Color(0, 0, 0);
-    coordinator->addComponent<Tag>(lifeBarEnemyBackground, Tag("InfoEnemy"));
+    coordinator->addComponent<Tag>(lifeBarEnemyBackground, Tag("InfoEnemy_sub"));
     coordinator->addComponent<Child>(lifeBarEnemyBackground, Child(InfoEnemy, lifeBarEnemyBackground));
 
     Entity enemyName = coordinator->createEntity();
     coordinator->addComponent<Transform>(enemyName, Transform(-250, -60, 18, 4));
     coordinator->addComponent<Text>(enemyName, Text("Enemy", 48));
-    coordinator->addComponent<Tag>(enemyName, Tag("InfoEnemy"));
+    coordinator->addComponent<Tag>(enemyName, Tag("InfoEnemy_sub"));
     coordinator->addComponent<UserInterface>(enemyName);
     coordinator->addComponent<Child>(enemyName, Child(InfoEnemy, enemyName));
     auto &enemyNameText = coordinator->getComponent<Text>(enemyName);
@@ -69,7 +91,7 @@ void match_showPokemonInfos()
     Entity enemyLevel = coordinator->createEntity();
     coordinator->addComponent<Transform>(enemyLevel, Transform(150, -60, 18, 4));
     coordinator->addComponent<Text>(enemyLevel, Text("Lvl:", 40));
-    coordinator->addComponent<Tag>(enemyLevel, Tag("InfoEnemy"));
+    coordinator->addComponent<Tag>(enemyLevel, Tag("InfoEnemy_sub"));
     coordinator->addComponent<UserInterface>(enemyLevel);
     coordinator->addComponent<Child>(enemyLevel, Child(InfoEnemy, enemyLevel));
     auto &enemyLevelText = coordinator->getComponent<Text>(enemyLevel);
@@ -96,7 +118,8 @@ void match_showPokemonInfos()
     coordinator->addComponent<Child>(lifeBarPlayer, Child(InfoPlayer, lifeBarPlayer));
     auto &lifeBarPlayerSprite = coordinator->getComponent<SpriteRenderer>(lifeBarPlayer);
     lifeBarPlayerSprite._color = sf::Color(0, 255, 0);
-    coordinator->addComponent<Tag>(lifeBarPlayer, Tag("InfoPlayer"));
+    coordinator->addComponent<Tag>(lifeBarPlayer, Tag("lifebar_0"));
+    match_setLifeBarSize(lifeBarPlayer, matchComponent._trainersPlayer[0]);
 
     Entity lifeBarPlayerBackground = coordinator->createEntity();
     coordinator->addComponent<Transform>(lifeBarPlayerBackground, Transform(lifeBarX, lifeBarY, 8.2, 0.6));
@@ -104,12 +127,12 @@ void match_showPokemonInfos()
     coordinator->addComponent<Child>(lifeBarPlayerBackground, Child(InfoPlayer, lifeBarPlayerBackground));
     auto &lifeBarPlayerBackgroundSprite = coordinator->getComponent<SpriteRenderer>(lifeBarPlayerBackground);
     lifeBarPlayerBackgroundSprite._color = sf::Color(0, 0, 0);
-    coordinator->addComponent<Tag>(lifeBarPlayerBackground, Tag("InfoPlayer"));
+    coordinator->addComponent<Tag>(lifeBarPlayerBackground, Tag("InfoPlayer_sub"));
 
     Entity playerName = coordinator->createEntity();
     coordinator->addComponent<Transform>(playerName, Transform(-250, -60, 18, 4));
     coordinator->addComponent<Text>(playerName, Text("Player", 48));
-    coordinator->addComponent<Tag>(playerName, Tag("InfoPlayer"));
+    coordinator->addComponent<Tag>(playerName, Tag("InfoPlayer_sub"));
     coordinator->addComponent<UserInterface>(playerName);
     coordinator->addComponent<Child>(playerName, Child(InfoPlayer, playerName));
     auto &playerNameText = coordinator->getComponent<Text>(playerName);
@@ -120,7 +143,7 @@ void match_showPokemonInfos()
     Entity playerLevel = coordinator->createEntity();
     coordinator->addComponent<Transform>(playerLevel, Transform(150, -60, 18, 4));
     coordinator->addComponent<Text>(playerLevel, Text("Lvl:", 40));
-    coordinator->addComponent<Tag>(playerLevel, Tag("InfoPlayer"));
+    coordinator->addComponent<Tag>(playerLevel, Tag("InfoPlayer_sub"));
     coordinator->addComponent<UserInterface>(playerLevel);
     coordinator->addComponent<Child>(playerLevel, Child(InfoPlayer, playerLevel));
     auto &playerLevelText = coordinator->getComponent<Text>(playerLevel);
@@ -169,7 +192,7 @@ void match_showAttacks(Entity match)
     }
 }
 
-void match_startAnimation(Entity match, float deltaTime)
+void match_encounterAnimation(Entity match, float deltaTime)
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     auto &matchComponent = coordinator->getComponent<Match>(match);
@@ -192,7 +215,7 @@ void match_startAnimation(Entity match, float deltaTime)
 }
 
 
-void match_startAnimationFinished(Entity match)
+void match_encounterAnimationFinished(Entity match)
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     auto &matchComponent = coordinator->getComponent<Match>(match);

@@ -65,6 +65,9 @@ public:
     void gainXP(int xp);
     void levelUp();
 
+    int _pvToGo;
+    int _pvFrom;
+
     int _currentHP;
     int _currentMaxHP;
     int _currentAttack;

@@ -122,6 +122,7 @@ int main()
     coordinator->addComponent<Transform>(playerSprite, Transform(0, -100, 5, 5));
     coordinator->addComponent<SpriteRenderer>(playerSprite, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 1));
     coordinator->addComponent<Tag>(playerSprite, Tag("playerSprite"));
+    trainerComponent._spriteLinked = playerSprite;
 
     Entity playerSpriteBase = coordinator->createEntity();
     coordinator->addComponent<Transform>(playerSpriteBase, Transform(0, 40, 5, 5));
@@ -132,6 +133,7 @@ int main()
     coordinator->addComponent<Transform>(enemySprite, Transform(0, -250, 5, 5));
     coordinator->addComponent<SpriteRenderer>(enemySprite, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 1));
     coordinator->addComponent<Tag>(enemySprite, Tag("enemySprite"));
+    enemyTrainerComponent._spriteLinked = enemySprite;
 
     Entity enemySpriteBase = coordinator->createEntity();
     coordinator->addComponent<Transform>(enemySpriteBase, Transform(0, -110, 5, 5));
@@ -143,7 +145,7 @@ int main()
     matchComponent._spritePlayerBase = playerSpriteBase;
     matchComponent._spriteOpponentBase = enemySpriteBase;
 
-    matchComponent.setAnimation(match_startAnimation, match_startAnimationFinished);
+    matchComponent.setAnimation(match_encounterAnimation, match_encounterAnimationFinished);
     matchComponent.launchNewMatch({trainer}, {enemyTrainer});
 
     Entity MenuSprite = coordinator->createEntity();

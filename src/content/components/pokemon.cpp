@@ -55,6 +55,10 @@ Pokemon::Pokemon()
     _specialDefense = 1;
     _speed = 1;
 
+    /*for animation*/
+    _pvToGo = 0;
+    _pvFrom = 0;
+
     /*stats*/
     _currentHP = 1;
     _currentMaxHP = 1;

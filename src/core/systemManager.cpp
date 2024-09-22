@@ -20,21 +20,22 @@ SystemManager::~SystemManager()
 
 void SystemManager::init()
 {
-    registerSystem<DrawSystem>();
-    registerSystem<AnimationSystem>();
-
-    /*Collision after movement*/
-    registerSystem<CollisionSystem>();
     registerSystem<InteractionCollisionSystem>();
 
     registerSystem<LifeTimerSystem>();
     registerSystem<TrailSystem>();
     registerSystem<CameraSystem>();
     registerSystem<UiButtonSystem>();
-    registerSystem<ChildSystem>();
-    registerSystem<TextRenderingSystem>();
     registerSystem<PlayerMovementSystem>();
     registerSystem<PokemonFightingSystem>();
+    registerSystem<ChildSystem>();
+
+    /*Collision after movement*/
+    registerSystem<CollisionSystem>();
+
+    registerSystem<AnimationSystem>();
+    registerSystem<DrawSystem>();
+    registerSystem<TextRenderingSystem>();
 }
 
 void SystemManager::entityDestroyed(Entity entity)

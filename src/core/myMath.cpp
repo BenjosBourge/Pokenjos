@@ -55,3 +55,14 @@ sf::Vector2f getPositionOfTile(int x, int y)
     return {static_cast<float>(72 * x + 1920/2 - 72 * 12 + 36), static_cast<float>(72 * y + 1080/2 - 72 * 6 + 36 + 40)};
 }
 
+float my_step(float a, float b) {
+    return a < b ? 0.0 : 1.0;
+}
+
+float my_sin(float x) {
+    return sin(x);
+}
+
+float my_cos(float x) {
+    return cos(x);
+}

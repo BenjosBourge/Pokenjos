@@ -16,8 +16,38 @@
 #include "../include/core/components/ui.hpp"
 #include "../include/core/components/text.hpp"
 #include "../include/matchMethods.hpp"
+#include "../include/core/components/spriteRenderer.hpp"
+#include "../include/core/components/child.hpp"
 
-void match_showAttacks(Entity match);
+void new_attackSequence(Entity match);
+
+void match_faintingAnimation(Entity match, float deltaTime)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    //make the tuple
+    Entity trainerAttacking = std::get<0>(matchComponent._attacksOrder[0]);
+    Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
+
+    Entity textMenu = coordinator->getEntityFromTag("textMenu");
+    auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
+    textMenuComponent._text = "Fainting animation!";
+}
+
+void match_faintingAnimationFinished(Entity match)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    //pop front
+    std::vector<std::tuple<Entity, Entity, int>> newAttacksOrder;
+    for (int i = 1; i < matchComponent._attacksOrder.size(); i++)
+        newAttacksOrder.push_back(matchComponent._attacksOrder[i]);
+    matchComponent._attacksOrder = newAttacksOrder;
+
+    new_attackSequence(match);
+}
 
 void match_lifebarAnimation(Entity match, float deltaTime)
 {
@@ -27,6 +57,15 @@ void match_lifebarAnimation(Entity match, float deltaTime)
     //make the tuple
     Entity trainerAttacking = std::get<0>(matchComponent._attacksOrder[0]);
     Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
+    auto &pokemon = coordinator->getComponent<Trainer>(trainerDefending)._pokemons[0];
+
+    int idDefending = coordinator->getComponent<Trainer>(trainerDefending)._id;
+    Entity lifeBar = coordinator->getEntityFromTag("lifebar_" + std::to_string(idDefending));
+
+    float ratio = matchComponent._timeAnimation / 1.f;
+    pokemon._currentHP = pokemon._pvFrom + (pokemon._pvToGo - pokemon._pvFrom) * (1.f - ratio);
+
+    match_setLifeBarSize(lifeBar, trainerDefending);
 
     Entity textMenu = coordinator->getEntityFromTag("textMenu");
     auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
@@ -38,7 +77,36 @@ void match_lifebarAnimationFinished(Entity match)
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
-    match_showAttacks(match);
+    //lifebar exact amount
+    Entity trainerAttacking = std::get<0>(matchComponent._attacksOrder[0]);
+    Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
+    auto &trainerAttackingComponent = coordinator->getComponent<Trainer>(trainerAttacking);
+    auto &trainerDefendingComponent = coordinator->getComponent<Trainer>(trainerDefending);
+    Attack attack = trainerAttackingComponent._pokemons[0]._attacks[std::get<2>(matchComponent._attacksOrder[0])];
+
+    //reset
+    auto &pokemon = trainerDefendingComponent._pokemons[0];
+    pokemon._currentHP = pokemon._pvToGo;
+    pokemon._pvFrom = pokemon._currentHP;
+
+    if (trainerDefendingComponent._pokemons[0]._currentHP <= 0)
+    {
+        trainerDefendingComponent._pokemons[0]._currentHP = 0;
+        matchComponent._timeAnimation = 2.f;
+        matchComponent.setAnimation(match_faintingAnimation, match_faintingAnimationFinished);
+    }
+    else
+    {
+        matchComponent._timeAnimation = 1.f;
+
+        //pop front
+        std::vector<std::tuple<Entity, Entity, int>> newAttacksOrder;
+        for (int i = 1; i < matchComponent._attacksOrder.size(); i++)
+            newAttacksOrder.push_back(matchComponent._attacksOrder[i]);
+        matchComponent._attacksOrder = newAttacksOrder;
+
+        new_attackSequence(match);
+    }
 }
 
 void match_flickeringAnimation(Entity match, float deltaTime)
@@ -46,9 +114,11 @@ void match_flickeringAnimation(Entity match, float deltaTime)
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
-    //make the tuple
-    Entity trainerAttacking = std::get<0>(matchComponent._attacksOrder[0]);
     Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
+    auto &trainerDefendingComponent = coordinator->getComponent<Trainer>(trainerDefending);
+    auto &trainerDefendingSprite = coordinator->getComponent<SpriteRenderer>(trainerDefendingComponent._spriteLinked);
+
+    trainerDefendingSprite._opacity = my_step(my_sin(matchComponent._timeAnimation * 50), 0.);
 
     Entity textMenu = coordinator->getEntityFromTag("textMenu");
     auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
@@ -60,25 +130,25 @@ void match_flickeringAnimationFinished(Entity match)
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
-    matchComponent._timeAnimation = 2.f;
+    Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
+    auto &trainerDefendingComponent = coordinator->getComponent<Trainer>(trainerDefending);
+    auto &trainerDefendingSprite = coordinator->getComponent<SpriteRenderer>(trainerDefendingComponent._spriteLinked);
 
-    match_showPokemonInfos();
+    trainerDefendingSprite._opacity = 1.;
+
+    matchComponent._timeAnimation = 1.f;
+
     matchComponent.setAnimation(match_lifebarAnimation, match_lifebarAnimationFinished);
 }
 
 
 void match_attackAnimation(Entity match, float deltaTime)
 {
-    std::cout << "MAMMA MIA" << std::endl;
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
-    //make the tuple
-    std::cout << matchComponent._attacksOrder.size() << std::endl;
     Entity trainerAttacking = std::get<0>(matchComponent._attacksOrder[0]);
     Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
-
-    std::cout << "YAHOO" << std::endl;
 
     auto &trainerAttackingComponent = coordinator->getComponent<Trainer>(trainerAttacking);
     auto &trainerDefendingComponent = coordinator->getComponent<Trainer>(trainerDefending);
@@ -93,25 +163,9 @@ void match_attackAnimationFinished(Entity match)
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
-    /*Entity trainerAttacking = std::get<0>(matchComponent._attacksOrder[0]);
-    Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
+    matchComponent._timeAnimation = 1.f;
 
-    auto &trainerAttackingComponent = coordinator->getComponent<Trainer>(trainerAttacking);
-
-    Entity spriteAttacking = NULL_ENTITY;
-    Entity spriteDefending = NULL_ENTITY;
-
-    if (trainerAttackingComponent._id == 0) {
-        spriteAttacking = matchComponent._spritePlayer;
-        spriteDefending = matchComponent._spriteOpponent;
-    } else {
-        spriteAttacking = matchComponent._spriteOpponent;
-        spriteDefending = matchComponent._spritePlayer;
-    }
-
-    auto &transformSpriteAttacking = coordinator->getComponent<Transform>(spriteAttacking);*/
-
-    matchComponent._timeAnimation = 3.f;
+    match_showPokemonInfos();
     matchComponent.setAnimation(match_flickeringAnimation, match_flickeringAnimationFinished);
 }
 
@@ -134,8 +188,44 @@ void match_startAttackAnimationFinished(Entity match)
     auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
     textMenuComponent._text = "";
 
+    match_removePokemonInfos();
+
     matchComponent._timeAnimation = 3.f;
     matchComponent.setAnimation(match_attackAnimation, match_attackAnimationFinished);
+}
+
+
+void new_attackSequence(Entity match)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+    auto &trainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersPlayer[0]);
+    auto &enemyTrainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersOpponent[0]);
+
+    if (matchComponent._attacksOrder.empty())
+    {
+        //end of the attack sequence
+        match_showAttacks(match);
+        matchComponent.setAnimation(nullptr, nullptr);
+        std::cout << "End of the attack sequence !!!!!!" << std::endl;
+    }
+    else
+    {
+        //precalculate the attack
+        Entity trainerAttacking = std::get<0>(matchComponent._attacksOrder[0]);
+        Entity trainerDefending = std::get<1>(matchComponent._attacksOrder[0]);
+        auto &trainerAttackingComponent = coordinator->getComponent<Trainer>(trainerAttacking);
+        auto &trainerDefendingComponent = coordinator->getComponent<Trainer>(trainerDefending);
+        Attack attack = trainerAttackingComponent._pokemons[0]._attacks[std::get<2>(matchComponent._attacksOrder[0])];
+
+        //TODO: calculate the damage
+        trainerDefendingComponent._pokemons[0]._pvFrom = trainerDefendingComponent._pokemons[0]._currentHP;
+        trainerDefendingComponent._pokemons[0]._pvToGo = trainerDefendingComponent._pokemons[0]._currentHP - attack._power;
+
+        matchComponent._timeAnimation = 1.f;
+        matchComponent.setAnimation(match_startAttackAnimation, match_startAttackAnimationFinished);
+    }
 }
 
 
@@ -148,6 +238,7 @@ void match_setupCombatSequence()
     auto &trainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersPlayer[0]);
     auto &enemyTrainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersOpponent[0]);
 
+
     std::vector<Entity> entities = coordinator->getEntitiesFromTag("attack");
     for (auto &entity : entities)
         coordinator->killEntity(entity);
@@ -156,8 +247,7 @@ void match_setupCombatSequence()
     matchComponent._attacksOrder.push_back(std::make_tuple(matchComponent._trainersPlayer[0], matchComponent._trainersOpponent[0], 0));
     matchComponent._attacksOrder.push_back(std::make_tuple(matchComponent._trainersOpponent[0], matchComponent._trainersPlayer[0], 0));
 
-    matchComponent._timeAnimation = 1.f;
-    matchComponent.setAnimation(match_startAttackAnimation, match_startAttackAnimationFinished);
+    new_attackSequence(match);
 }
 
 
@@ -173,7 +263,6 @@ void match_launchAttack(Entity self)
     std::vector<Entity> entities = coordinator->getEntitiesFromTag("attack");
     for (auto &entity : entities)
         coordinator->killEntity(entity);
-    match_removePokemonInfos();
 
     match_setupCombatSequence();
 }

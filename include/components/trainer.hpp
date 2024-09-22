@@ -10,6 +10,7 @@
 #include <string>
 #include <array>
 #include "pokemon.hpp"
+#include "../core/entity.hpp"
 
 class Trainer {
 public:
@@ -21,4 +22,6 @@ public:
     std::array<Pokemon, 6> _pokemons;
     int _currentPokemon;
     int _money;
+
+    Entity _spriteLinked;
 };

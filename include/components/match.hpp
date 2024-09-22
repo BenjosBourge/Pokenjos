@@ -23,6 +23,8 @@ enum MatchState {
     MATCH_STATE_END
 };
 
+class Trainer;
+
 class Match {
 public:
     Match();
