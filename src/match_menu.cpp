@@ -21,6 +21,7 @@
 #include "../include/matchMethods.hpp"
 #include "../include/core/components/text.hpp"
 #include "../include/core/components/child.hpp"
+#include "../include/core/components/interactionBoxCollider.hpp"
 
 void match_setLifeBarSize(Entity lifeBar, Entity trainer)
 {
@@ -163,35 +164,6 @@ void match_removePokemonInfos()
         coordinator->killEntity(entity);
 }
 
-void match_showAttacks(Entity match)
-{
-    std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    auto &matchComponent = coordinator->getComponent<Match>(match);
-    auto &trainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersPlayer[0]);
-
-    for (int i = 0; i < 4; i += 1) {
-        auto attack = trainerComponent._pokemons[0]._attacks[i];
-
-        if (attack._id == -1)
-            break;
-
-        std::cout << i << ": " << attack._name << std::endl;
-
-        Entity attackEntity = coordinator->createEntity();
-        int x = -480 + 960 * (i%2);
-        int y = 225 + 200 * (i/2);
-
-        coordinator->addComponent<Transform>(attackEntity, Transform(x, y, 29.4, 5.8));
-        coordinator->addComponent<SpriteRenderer>(attackEntity, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
-        coordinator->addComponent<Tag>(attackEntity, Tag("attack"));
-        coordinator->addComponent<UserInterface>(attackEntity);
-        coordinator->addComponent<UiButton>(attackEntity, UiButton(match_launchAttack));
-        auto &uiButton = coordinator->getComponent<UiButton>(attackEntity);
-        uiButton.setZoomWhenHovered(true, coordinator->getComponent<Transform>(attackEntity));
-        coordinator->addComponent<InteractionBoxCollider>(attackEntity, InteractionBoxCollider(29.4 * 32, 5.8 * 32, 0, 0, true));
-    }
-}
-
 void match_encounterAnimation(Entity match, float deltaTime)
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
@@ -221,5 +193,153 @@ void match_encounterAnimationFinished(Entity match)
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
     match_showPokemonInfos();
-    match_showAttacks(match);
+    match_showMain();
+}
+
+
+void match_showAttacks(Entity button)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    Entity match = coordinator->getEntityFromTag("match");
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+    auto &trainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersPlayer[0]);
+
+    for (int i = 0; i < 4; i += 1) {
+        auto attack = trainerComponent._pokemons[0]._attacks[i];
+
+        if (attack._id == -1)
+            break;
+
+        Entity attackEntity = coordinator->createEntity();
+        int x = -480 + 960 * (i%2);
+        int y = 225 + 200 * (i/2);
+
+        coordinator->addComponent<Transform>(attackEntity, Transform(x, y, 29.4, 5.8));
+        coordinator->addComponent<SpriteRenderer>(attackEntity, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
+        coordinator->addComponent<Tag>(attackEntity, Tag("attack"));
+        coordinator->addComponent<UserInterface>(attackEntity);
+        coordinator->addComponent<UiButton>(attackEntity, UiButton(match_launchAttack));
+        auto &uiButton = coordinator->getComponent<UiButton>(attackEntity);
+        uiButton.setZoomWhenHovered(true, coordinator->getComponent<Transform>(attackEntity));
+        coordinator->addComponent<InteractionBoxCollider>(attackEntity, InteractionBoxCollider(29.4 * 32, 5.8 * 32, 0, 0, true));
+
+        Entity attackText = coordinator->createEntity();
+        coordinator->addComponent<Transform>(attackText, Transform(-60, -20, 1, 1));
+        coordinator->addComponent<Text>(attackText, Text(attack._name, 48));
+        coordinator->addComponent<Tag>(attackText, Tag("attack"));
+        coordinator->addComponent<UserInterface>(attackText);
+        coordinator->addComponent<Child>(attackText, Child(attackEntity, attackText));
+        auto &attackTextComponent = coordinator->getComponent<Text>(attackText);
+        attackTextComponent._color = sf::Color(0, 0, 0);
+
+    }
+}
+
+void match_showBag(Entity button)
+{
+    std::cout << "Bag" << std::endl;
+}
+
+void match_showPokemon(Entity button)
+{
+    std::cout << "Pokemon" << std::endl;
+}
+
+void match_showRun(Entity button)
+{
+    std::cout << "Run" << std::endl;
+}
+
+void match_showMain()
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    Entity match = coordinator->getEntityFromTag("match");
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    Entity attackButton = coordinator->createEntity();
+    coordinator->addComponent<Transform>(attackButton, Transform(0, 200, 15, 5));
+    coordinator->addComponent<SpriteRenderer>(attackButton, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
+    coordinator->addComponent<Tag>(attackButton, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(attackButton);
+    coordinator->addComponent<UiButton>(attackButton, UiButton(match_showAttacks));
+    coordinator->addComponent<InteractionBoxCollider>(attackButton, InteractionBoxCollider(15 * 32, 5 * 32, 0, 0, true));
+    auto &attackButtonSprite = coordinator->getComponent<SpriteRenderer>(attackButton);
+    attackButtonSprite._color = sf::Color(236, 56, 57);
+    auto &attackButtonComponent = coordinator->getComponent<UiButton>(attackButton);
+    attackButtonComponent.setZoomWhenHovered(true, coordinator->getComponent<Transform>(attackButton));
+
+    Entity attackText = coordinator->createEntity();
+    coordinator->addComponent<Transform>(attackText, Transform(-60, -20, 1, 1));
+    coordinator->addComponent<Text>(attackText, Text("Attack", 48));
+    coordinator->addComponent<Tag>(attackText, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(attackText);
+    coordinator->addComponent<Child>(attackText, Child(attackButton, attackText));
+    auto &attackTextComponent = coordinator->getComponent<Text>(attackText);
+    attackTextComponent._color = sf::Color(0, 0, 0);
+
+
+    Entity runButton = coordinator->createEntity();
+    coordinator->addComponent<Transform>(runButton, Transform(0, 400, 8, 4));
+    coordinator->addComponent<SpriteRenderer>(runButton, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
+    coordinator->addComponent<Tag>(runButton, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(runButton);
+    coordinator->addComponent<UiButton>(runButton, UiButton(match_showRun));
+    coordinator->addComponent<InteractionBoxCollider>(runButton, InteractionBoxCollider(8 * 32, 4 * 32, 0, 0, true));
+    auto &runButtonSprite = coordinator->getComponent<SpriteRenderer>(runButton);
+    runButtonSprite._color = sf::Color(40, 146, 204);
+    auto &runButtonComponent = coordinator->getComponent<UiButton>(runButton);
+    runButtonComponent.setZoomWhenHovered(true, coordinator->getComponent<Transform>(runButton));
+
+    Entity runText = coordinator->createEntity();
+    coordinator->addComponent<Transform>(runText, Transform(-60, -20, 1, 1));
+    coordinator->addComponent<Text>(runText, Text("Run", 48));
+    coordinator->addComponent<Tag>(runText, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(runText);
+    coordinator->addComponent<Child>(runText, Child(runButton, runText));
+    auto &runTextComponent = coordinator->getComponent<Text>(runText);
+    runTextComponent._color = sf::Color(0, 0, 0);
+
+
+    Entity bagButton = coordinator->createEntity();
+    coordinator->addComponent<Transform>(bagButton, Transform(-350, 380, 8, 4));
+    coordinator->addComponent<SpriteRenderer>(bagButton, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
+    coordinator->addComponent<Tag>(bagButton, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(bagButton);
+    coordinator->addComponent<UiButton>(bagButton, UiButton(match_showBag));
+    coordinator->addComponent<InteractionBoxCollider>(bagButton, InteractionBoxCollider(8 * 32, 4 * 32, 0, 0, true));
+    auto &bagButtonSprite = coordinator->getComponent<SpriteRenderer>(bagButton);
+    bagButtonSprite._color = sf::Color(227, 154, 41);
+    auto &bagButtonComponent = coordinator->getComponent<UiButton>(bagButton);
+    bagButtonComponent.setZoomWhenHovered(true, coordinator->getComponent<Transform>(bagButton));
+
+    Entity bagText = coordinator->createEntity();
+    coordinator->addComponent<Transform>(bagText, Transform(-60, -20, 1, 1));
+    coordinator->addComponent<Text>(bagText, Text("Bag", 48));
+    coordinator->addComponent<Tag>(bagText, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(bagText);
+    coordinator->addComponent<Child>(bagText, Child(bagButton, bagText));
+    auto &bagTextComponent = coordinator->getComponent<Text>(bagText);
+    bagTextComponent._color = sf::Color(0, 0, 0);
+
+
+    Entity pokemonButton = coordinator->createEntity();
+    coordinator->addComponent<Transform>(pokemonButton, Transform(350, 380, 8, 4));
+    coordinator->addComponent<SpriteRenderer>(pokemonButton, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
+    coordinator->addComponent<Tag>(pokemonButton, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(pokemonButton);
+    coordinator->addComponent<UiButton>(pokemonButton, UiButton(match_showPokemon));
+    coordinator->addComponent<InteractionBoxCollider>(pokemonButton, InteractionBoxCollider(8 * 32, 4 * 32, 0, 0, true));
+    auto &pokemonButtonSprite = coordinator->getComponent<SpriteRenderer>(pokemonButton);
+    pokemonButtonSprite._color = sf::Color(90, 178, 40);
+    auto &pokemonButtonComponent = coordinator->getComponent<UiButton>(pokemonButton);
+    pokemonButtonComponent.setZoomWhenHovered(true, coordinator->getComponent<Transform>(pokemonButton));
+
+    Entity pokemonText = coordinator->createEntity();
+    coordinator->addComponent<Transform>(pokemonText, Transform(-60, -20, 1, 1));
+    coordinator->addComponent<Text>(pokemonText, Text("Pokemon", 48));
+    coordinator->addComponent<Tag>(pokemonText, Tag("main_menu"));
+    coordinator->addComponent<UserInterface>(pokemonText);
+    coordinator->addComponent<Child>(pokemonText, Child(pokemonButton, pokemonText));
+    auto &pokemonTextComponent = coordinator->getComponent<Text>(pokemonText);
+    pokemonTextComponent._color = sf::Color(0, 0, 0);
 }

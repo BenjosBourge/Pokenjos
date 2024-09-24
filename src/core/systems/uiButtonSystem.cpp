@@ -32,7 +32,7 @@ void UiButtonSystem::update(float deltaTime)
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
     if (!coordinator->_window->hasFocus())
         return;
-    sf::Vector2i mousePos = sf::Mouse::getPosition(*coordinator->_window);
+    sf::Vector2i mousePos = coordinator->_mouse.getMousePosition();
 
     for (auto const& entity : _entitiesThisFrame) {
         auto &uiButton = coordinator->getComponent<UiButton>(entity);
@@ -64,7 +64,8 @@ void UiButtonSystem::update(float deltaTime)
                 && mousePos.y <= y + interactionBoxCollider._height / 2) {
                 uiButton._isHovered = true;
 
-                if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                if (coordinator->_mouse._leftButtonPressed) {
+                    coordinator->_mouse._leftButtonPressed = false;
                     if (!uiButton._isClicked)
                         uiButton._firstFrameClicked = true;
                     uiButton._isClicked = true;

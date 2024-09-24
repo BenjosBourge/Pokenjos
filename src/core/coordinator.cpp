@@ -44,6 +44,7 @@ void Coordinator::update()
     _entitiesToKill.clear();
     _deltaTime = _clock.getElapsedTime().asSeconds();
     _clock.restart();
+    _mouse.update();
     _systemManager->update(_deltaTime);
 
     receivePacket();
@@ -107,6 +108,13 @@ std::vector<Entity> Coordinator::getEntitiesFromTag(std::string tag)
             finalEntities.push_back(e);
     }
     return finalEntities;
+}
+
+void Coordinator::removeEntitiesFromTag(std::string tag)
+{
+    std::vector<Entity> entities = getEntitiesFromTag(tag);
+    for (auto &e : entities)
+        killEntity(e);
 }
 
 void Coordinator::sendPacket(std::vector<unsigned char> data, int id)

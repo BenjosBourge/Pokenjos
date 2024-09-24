@@ -10,6 +10,7 @@
 #include "systemManager.hpp"
 #include "texture.hpp"
 #include "networkManager.hpp"
+#include "mouse.hpp"
 
 class Coordinator
 {
@@ -24,6 +25,8 @@ public:
     void update();
     Entity getEntityFromTag(std::string tag);
     std::vector<Entity> getEntitiesFromTag(std::string tag);
+
+    void removeEntitiesFromTag(std::string tag);
 
     /*Entity Creation and Destruction*/
     Entity createEntity();
@@ -56,6 +59,8 @@ public:
     void loadTextures();
 
     float _deltaTime;
+
+    Mouse _mouse;
 
     /*
      * Debug

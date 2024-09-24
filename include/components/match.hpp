@@ -23,6 +23,14 @@ enum MatchState {
     MATCH_STATE_END
 };
 
+enum MatchMenu {
+    MATCH_MENU_MAIN,
+    MATCH_MENU_ATTACK,
+    MATCH_MENU_POKEMON,
+    MATCH_MENU_ITEM,
+    MATCH_MENU_RUN
+};
+
 class Trainer;
 
 class Match {

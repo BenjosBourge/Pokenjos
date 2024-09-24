@@ -206,7 +206,7 @@ void new_attackSequence(Entity match)
     if (matchComponent._attacksOrder.empty())
     {
         //end of the attack sequence
-        match_showAttacks(match);
+        match_showMain();
         matchComponent.setAnimation(nullptr, nullptr);
         std::cout << "End of the attack sequence !!!!!!" << std::endl;
     }

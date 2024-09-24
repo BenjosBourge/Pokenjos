@@ -5,7 +5,7 @@
 #pragma once
 
 void match_attackAnimation(Entity match, float deltaTime);
-void match_showAttacks(Entity match);
+void match_showMain();
 void match_attackAnimationFinished(Entity match);
 void match_launchAttack(Entity self);
 
