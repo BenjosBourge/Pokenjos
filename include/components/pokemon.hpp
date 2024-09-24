@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <array>
+#include <SFML/Graphics.hpp>
 
 //needs to be here
 
@@ -32,6 +33,29 @@ enum Type {
     STEEL_TYPE,
     FAIRY_TYPE,
     NONE_TYPE
+};
+
+static const std::vector<sf::Color> type_colors = {
+        {176, 176, 160}, //NORMAL
+        {240, 0, 0}, //FIRE
+        {121, 176, 248}, //WATER
+        {248, 248, 62}, //ELECTRIC
+        {112, 216, 80}, //GRASS
+        {160, 248, 248}, //ICE
+        {208, 124, 36}, //COMBAT
+        {138, 97, 174}, //POISON
+        {208, 176, 96}, //GROUND
+        {176, 176, 186}, //FLYING
+        {248, 88, 184}, //PSYCHIC
+        {112, 216, 80}, //BUG
+        {160, 104, 80}, //ROCK
+        {168, 112, 208}, //GHOST
+        {105, 68, 137}, //DRAGON
+        {60, 49, 70}, //DARK
+        {144, 168, 180}, //STEEL
+        {231, 141, 186}, //FAIRY
+        {0, 0, 0} //NONE
+
 };
 
 class Pokemon;

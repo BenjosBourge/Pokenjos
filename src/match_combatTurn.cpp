@@ -208,6 +208,9 @@ void new_attackSequence(Entity match)
         //end of the attack sequence
         match_showMain();
         matchComponent.setAnimation(nullptr, nullptr);
+        Entity textMenu = coordinator->getEntityFromTag("textMenu");
+        auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
+        textMenuComponent._text = "";
         std::cout << "End of the attack sequence !!!!!!" << std::endl;
     }
     else

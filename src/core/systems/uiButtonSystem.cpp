@@ -101,11 +101,11 @@ void UiButtonSystem::update(float deltaTime)
 
         if (uiButton._zoomWhenHovered) {
             if (uiButton._isHovered) {
-                float delta = deltaTime * 1 * ((uiButton._scale.x * (1.05f)) - transform._width);
+                float delta = deltaTime * uiButton._zoomSpeed * ((uiButton._scale.x * uiButton._zoomEffect) - transform._width);
 
                 uiButton._currentSize += delta;
             } else {
-                float delta = deltaTime * 1 * (uiButton._scale.x - transform._width);
+                float delta = deltaTime * uiButton._dezoomSpeed * (uiButton._scale.x - transform._width);
 
                 uiButton._currentSize += delta;
             }

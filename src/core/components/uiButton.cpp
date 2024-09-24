@@ -12,6 +12,9 @@ UiButton::UiButton()
     _zoomWhenHovered = false;
     _isHovered = false;
     _currentSize = 1;
+    _zoomEffect = 1.05;
+    _zoomSpeed = 1;
+    _dezoomSpeed = 1;
     _delay = 0;
     _isActivated = false;
     _firstFrameClicked = false;
@@ -28,6 +31,7 @@ UiButton::UiButton()
     for (int i = 0; i < 36; i += 1)
         _timerKeys[i] = 0;
     _text = NULL_ENTITY;
+    _id = 0;
 }
 
 UiButton::UiButton(void (*function)(Entity)) : UiButton()
