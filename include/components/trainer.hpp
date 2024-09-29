@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <array>
+#include <tuple>
 #include "pokemon.hpp"
 #include "../core/entity.hpp"
 
@@ -22,6 +23,9 @@ public:
     std::array<Pokemon, 6> _pokemons;
     int _currentPokemon;
     int _money;
+
+    std::vector<std::pair<int, int>> _pokeballs;
+    std::vector<std::pair<int, int>> _items;
 
     Entity _spriteLinked;
 };

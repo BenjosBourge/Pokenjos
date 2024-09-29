@@ -31,6 +31,13 @@ enum MatchMenu {
     MATCH_MENU_RUN
 };
 
+enum MatchAction {
+    MATCH_ACTION_ATTACK,
+    MATCH_ACTION_POKEMON,
+    MATCH_ACTION_ITEM,
+    MATCH_ACTION_RUN
+};
+
 class Trainer;
 
 class Match {
@@ -42,6 +49,7 @@ public:
     void setSelfEntity(Entity entity) { _selfEntity = entity; }
 
     void launchNewMatch(std::vector<Entity> trainersPlayer, std::vector<Entity> trainersOpponent);
+    void enemyPokemonAction();
 
     std::vector<Entity> _trainersPlayer;
     std::vector<Entity> _trainersOpponent;
@@ -59,7 +67,11 @@ public:
 
     int _state;
 
-    std::vector<std::tuple<Entity, Entity, int>> _attacksOrder;
+    //action: (attacker, defender, action_type, id)
+    std::vector<std::tuple<Entity, Entity, int, int>> _actionsInQueue;
+    std::vector<std::tuple<Entity, Entity, int, int>> _actions;
 
     float _loopingTimer;
+
+    int _itemCategory;
 };

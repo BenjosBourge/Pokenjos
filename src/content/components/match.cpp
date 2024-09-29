@@ -28,6 +28,8 @@ Match::Match()
     _animationEnded = nullptr;
 
     _loopingTimer = 0.0f;
+
+    _itemCategory = 0;
 }
 
 Match::~Match()
@@ -65,4 +67,20 @@ void Match::launchNewMatch(std::vector<Entity> trainersPlayer, std::vector<Entit
     spriteOpponent._rectHeight = 80;
     auto &enemyTrainerComponent = coordinator->getComponent<Trainer>(_trainersOpponent[0]);
     spriteOpponent._offsetX = enemyTrainerComponent._pokemons[0]._id * 80;
+}
+
+void Match::enemyPokemonAction()
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+
+    for (auto &trainer : _trainersOpponent) {
+        auto &trainerComponent = coordinator->getComponent<Trainer>(trainer);
+
+        //TODO: choose the best action
+
+        if (trainerComponent._pokemons[0]._currentHP > 0) {
+            _actionsInQueue.push_back(std::make_tuple(trainer, _trainersPlayer[0], MATCH_ACTION_ATTACK, 0));
+            break;
+        }
+    }
 }

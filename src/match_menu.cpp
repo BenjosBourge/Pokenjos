@@ -32,7 +32,11 @@ void match_setLifeBarSize(Entity lifeBar, Entity trainer)
     auto &lifeBarComponent = coordinator->getComponent<Transform>(lifeBar);
     Pokemon pokemon = coordinator->getComponent<Trainer>(trainer)._pokemons[0];
 
-    lifeBarComponent._width = 8.f * ((float)pokemon._currentHP / (float)pokemon._currentMaxHP);
+    float progression = (float)pokemon._currentHP / (float)pokemon._currentMaxHP;
+    if (progression < 0)
+        progression = 0;
+
+    lifeBarComponent._width = 8.f * progression;
     lifeBarComponent._height = 0.4;
     lifeBarComponent._x = 60.f - (8.f - lifeBarComponent._width) * 0.5f * 32.f;
     lifeBarComponent._y = 30.f;
@@ -194,6 +198,7 @@ void match_encounterAnimationFinished(Entity match)
 
     match_showPokemonInfos();
     match_showMain();
+    matchComponent.enemyPokemonAction();
 }
 
 
@@ -223,6 +228,7 @@ void match_showAttacks(Entity button)
         coordinator->addComponent<UiButton>(attackEntity, UiButton(match_launchAttack));
         auto &uiButton = coordinator->getComponent<UiButton>(attackEntity);
         uiButton.setZoomWhenHovered(true, coordinator->getComponent<Transform>(attackEntity));
+        uiButton._id = i;
         coordinator->addComponent<InteractionBoxCollider>(attackEntity, InteractionBoxCollider(29.4 * 32, 5.8 * 32, 0, 0, true));
         auto &attackSprite = coordinator->getComponent<SpriteRenderer>(attackEntity);
         attackSprite._color = type_colors[attack._type];
@@ -241,8 +247,27 @@ void match_showAttacks(Entity button)
 
 void match_useItem(Entity button)
 {
-    std::cout << "Use item" << std::endl;
+    //TODO: use item became an action in the list of actions
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    Entity match = coordinator->getEntityFromTag("match");
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+    Entity playerTrainer = coordinator->getEntityFromTag("player_trainer");
+    auto &playerTrainerComponent = coordinator->getComponent<Trainer>(playerTrainer);
+    auto &buttonComponent = coordinator->getComponent<UiButton>(button);
 
+    std::cout << "Use item: " << buttonComponent._id << std::endl;
+    if (matchComponent._itemCategory == 0) {//pokeball
+        std::cout << "Use pokeball" << std::endl;
+        match_throwPokeball();
+    } else {
+        std::cout << "Use potion" << std::endl;
+        playerTrainerComponent._pokemons[0]._currentHP += 20;
+        if (playerTrainerComponent._pokemons[0]._currentHP > playerTrainerComponent._pokemons[0]._currentMaxHP)
+            playerTrainerComponent._pokemons[0]._currentHP = playerTrainerComponent._pokemons[0]._currentMaxHP;
+        std::string lifebar_tag = "lifebar_" + std::to_string(playerTrainerComponent._id);
+        //TODO: any trainer can use potions
+        match_setLifeBarSize(coordinator->getEntityFromTag(lifebar_tag), playerTrainer);
+    }
 }
 
 void match_showBagItems(int category)
@@ -271,14 +296,15 @@ void match_showBagItems(int category)
     }
 }
 
-void match_showBagItemsPokeball(Entity button)
+void match_showBagItemsCategory(Entity button)
 {
-    match_showBagItems(0);
-}
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    Entity match = coordinator->getEntityFromTag("match");
+    auto &matchComponent = coordinator->getComponent<Match>(match);
 
-void match_showBagItemsPotion(Entity button)
-{
-    match_showBagItems(1);
+    auto &uiButton = getCoordinator()->getComponent<UiButton>(button);
+    match_showBagItems(uiButton._id);
+    matchComponent._itemCategory = uiButton._id;
 }
 
 void match_showBag(Entity button)
@@ -294,12 +320,13 @@ void match_showBag(Entity button)
     coordinator->addComponent<SpriteRenderer>(buttonPokeBall, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
     coordinator->addComponent<Tag>(buttonPokeBall, Tag("menu_bag"));
     coordinator->addComponent<UserInterface>(buttonPokeBall);
-    coordinator->addComponent<UiButton>(buttonPokeBall, UiButton(match_showBagItemsPokeball));
+    coordinator->addComponent<UiButton>(buttonPokeBall, UiButton(match_showBagItemsCategory));
     coordinator->addComponent<InteractionBoxCollider>(buttonPokeBall, InteractionBoxCollider(8 * 32, 10 * 32, 0, 0, true));
     auto &buttonPokeBallSprite = coordinator->getComponent<SpriteRenderer>(buttonPokeBall);
     buttonPokeBallSprite._color = sf::Color(236, 56, 57);
     auto &buttonPokeBallComponent = coordinator->getComponent<UiButton>(buttonPokeBall);
     buttonPokeBallComponent.setZoomWhenHovered(true, coordinator->getComponent<Transform>(buttonPokeBall));
+    buttonPokeBallComponent._id = 0;
 
     Entity textPokeBall = coordinator->createEntity();
     coordinator->addComponent<Transform>(textPokeBall, Transform(-60, -20, 1, 1));
@@ -316,12 +343,13 @@ void match_showBag(Entity button)
     coordinator->addComponent<SpriteRenderer>(buttonPotion, SpriteRenderer(TEXTURE_TYPE_EXAMPLE, 32, 32, 4));
     coordinator->addComponent<Tag>(buttonPotion, Tag("menu_bag"));
     coordinator->addComponent<UserInterface>(buttonPotion);
-    coordinator->addComponent<UiButton>(buttonPotion, UiButton(match_showBagItemsPotion));
+    coordinator->addComponent<UiButton>(buttonPotion, UiButton(match_showBagItemsCategory));
     coordinator->addComponent<InteractionBoxCollider>(buttonPotion, InteractionBoxCollider(8 * 32, 10 * 32, 0, 0, true));
     auto &buttonPotionSprite = coordinator->getComponent<SpriteRenderer>(buttonPotion);
     buttonPotionSprite._color = sf::Color(236, 56, 57);
     auto &buttonPotionComponent = coordinator->getComponent<UiButton>(buttonPotion);
     buttonPotionComponent.setZoomWhenHovered(true, coordinator->getComponent<Transform>(buttonPotion));
+    buttonPotionComponent._id = 1;
 
     Entity textPotion = coordinator->createEntity();
     coordinator->addComponent<Transform>(textPotion, Transform(-60, -20, 1, 1));

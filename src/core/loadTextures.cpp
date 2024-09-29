@@ -23,4 +23,10 @@ void Coordinator::loadTextures()
 
     texture.loadFromFile("assets/enemy_base.png");
     _textures.emplace_back(TEXTURE_TYPE_ENEMY_BASE, texture);
+
+    texture.loadFromFile("assets/pokeball.png");
+    _textures.emplace_back(TEXTURE_TYPE_POKEBALL, texture);
+
+    texture.loadFromFile("assets/potion.png");
+    _textures.emplace_back(TEXTURE_TYPE_POTION, texture);
 }

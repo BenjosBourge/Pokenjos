@@ -66,3 +66,7 @@ float my_sin(float x) {
 float my_cos(float x) {
     return cos(x);
 }
+
+double my_sqrt(double x) {
+    return sqrt(x);
+}

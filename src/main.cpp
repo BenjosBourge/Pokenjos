@@ -93,7 +93,6 @@ int main()
     //createMap(coordinator);
     //createPlayer(coordinator);
 
-
     Entity match = coordinator->createEntity();
     coordinator->addComponent<Match>(match);
     auto &matchComponent = coordinator->getComponent<Match>(match);
@@ -102,6 +101,7 @@ int main()
 
     Entity trainer = coordinator->createEntity();
     coordinator->addComponent<Trainer>(trainer);
+    coordinator->addComponent<Tag>(trainer, Tag("player_trainer"));
     auto &trainerComponent = coordinator->getComponent<Trainer>(trainer);
     trainerComponent._name = "Benjamin";
     trainerComponent._money = 1000;
@@ -115,7 +115,7 @@ int main()
     enemyTrainerComponent._name = "Julien";
     enemyTrainerComponent._money = 1000;
     enemyTrainerComponent._id = 1;
-    enemyTrainerComponent._pokemons[0] = createPokemon(BLASTOISE, 100);
+    enemyTrainerComponent._pokemons[0] = createPokemon(BLASTOISE, 1);
 
 
     Entity playerSprite = coordinator->createEntity();
