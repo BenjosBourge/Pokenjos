@@ -89,6 +89,8 @@ public:
     void gainXP(int xp);
     void levelUp();
 
+    bool _isCaptured;
+
     int _pvToGo;
     int _pvFrom;
 

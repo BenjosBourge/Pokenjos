@@ -45,9 +45,12 @@ public:
     Match();
     ~Match();
 
+    bool _inMatch;
+
     Entity _selfEntity;
     void setSelfEntity(Entity entity) { _selfEntity = entity; }
 
+    void exitMatch();
     void launchNewMatch(std::vector<Entity> trainersPlayer, std::vector<Entity> trainersOpponent);
     void enemyPokemonAction();
 
@@ -74,4 +77,6 @@ public:
     float _loopingTimer;
 
     int _itemCategory;
+    int _YCatchValue;
+    int _twitchValue;
 };

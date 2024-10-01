@@ -65,6 +65,9 @@ void PokemonFightingSystem::update(float deltaTime)
     for (auto const& entity : _entitiesThisFrame) {
         auto &match = coordinator->getComponent<Match>(entity);
 
+        if (!match._inMatch)
+            continue;
+
         if (match._timeAnimation > 0.0f) { //in the turn sequence
             //make an animation
 
@@ -85,9 +88,8 @@ void PokemonFightingSystem::update(float deltaTime)
 
         if (match._actionsInQueue.size() >= 2) {
             match_setupCombatSequence();
-        } else
-            std::cout << "Error: Not enough actions in queue" << std::endl;
-
+            continue;
+        }
 
         PokemonIdleAnimation(deltaTime, match);
     }

@@ -47,6 +47,8 @@ Attack::~Attack()
 
 Pokemon::Pokemon()
 {
+    _isCaptured = false;
+
     /*base stats*/
     _hp = 1;
     _attack = 1;

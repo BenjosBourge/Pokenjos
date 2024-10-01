@@ -29,6 +29,10 @@ void Mouse::update()
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
 
+    _leftButtonPressed = false;
+    _leftButtonReleased = false;
+    _rightButtonPressed = false;
+    _rightButtonReleased = false;
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         if (!_leftButtonHold)
             _leftButtonPressed = true;

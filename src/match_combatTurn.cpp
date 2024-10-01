@@ -43,20 +43,6 @@ void match_faintingAnimationFinished(Entity match)
     auto &matchComponent = coordinator->getComponent<Match>(match);
     auto &enemyTrainerComponent = coordinator->getComponent<Trainer>(matchComponent._trainersOpponent[0]);
 
-
-    bool pokemonAlive = false;
-    for (auto &pokemon : enemyTrainerComponent._pokemons) {
-        if (pokemon._id == -1)
-            continue;
-        std::cout << "pokemon._currentHP: " << pokemon._currentHP << std::endl;
-        if (pokemon._currentHP > 0)
-            pokemonAlive = true;
-    }
-    if (!pokemonAlive)
-    {
-        std::cout << "You win!" << std::endl;
-    }
-
     new_actionSequence(match);
 }
 
@@ -188,6 +174,164 @@ void match_attackAnimationFinished(Entity match)
 }
 
 
+/*
+ * Item animation
+ */
+
+
+void match_itemUseAnimation(Entity match, float deltaTime)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+
+}
+
+void match_itemUseAnimationFinished(Entity match)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    //pop front
+    std::vector<std::tuple<Entity, Entity, int, int>> newAttacksOrder;
+    for (int i = 1; i < matchComponent._actions.size(); i++)
+        newAttacksOrder.push_back(matchComponent._actions[i]);
+    matchComponent._actions = newAttacksOrder;
+
+    new_actionSequence(match);
+}
+
+
+/*
+ * Pokeball animation
+ */
+
+
+void match_exitingPokeballAnimation(Entity match, float deltaTime)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+
+}
+
+void match_exitingPokeballAnimationFinished(Entity match)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    //pop front
+    std::vector<std::tuple<Entity, Entity, int, int>> newAttacksOrder;
+    for (int i = 1; i < matchComponent._actions.size(); i++)
+        newAttacksOrder.push_back(matchComponent._actions[i]);
+    matchComponent._actions = newAttacksOrder;
+
+    new_actionSequence(match);
+}
+
+
+void match_idlePokeballAnimation(Entity match, float deltaTime);
+void match_idlePokeballAnimationFinished(Entity match);
+
+void match_twitchingPokeballAnimation(Entity match, float deltaTime)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+}
+
+void match_twitchingPokeballAnimationFinished(Entity match)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    Entity textMenu = coordinator->getEntityFromTag("textMenu");
+    auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
+    textMenuComponent._text = "";
+
+    matchComponent._timeAnimation = 1.f;
+    matchComponent.setAnimation(match_idlePokeballAnimation, match_idlePokeballAnimationFinished);
+}
+
+
+void match_idlePokeballAnimation(Entity match, float deltaTime)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+
+
+}
+
+void match_idlePokeballAnimationFinished(Entity match)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    Entity textMenu = coordinator->getEntityFromTag("textMenu");
+    auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
+    textMenuComponent._text = "Twitching...";
+
+    //TODO: break or not
+
+    bool staying = match_isPokeballCaught(matchComponent._YCatchValue);
+    if (staying)
+    {
+        if (matchComponent._twitchValue < 3)
+        {
+            matchComponent._timeAnimation = 1.f;
+            matchComponent.setAnimation(match_twitchingPokeballAnimation, match_twitchingPokeballAnimationFinished);
+        } else {
+            //TODO: Caught !
+
+            //pop front and all the attack of the caught pokemon
+            std::vector<std::tuple<Entity, Entity, int, int>> newAttacksOrder;
+            for (int i = 1; i < matchComponent._actions.size(); i++)
+                if (std::get<0>(matchComponent._actions[i]) != std::get<1>(matchComponent._actions[0]))
+                newAttacksOrder.push_back(matchComponent._actions[i]);
+            matchComponent._actions = newAttacksOrder;
+
+            new_actionSequence(match);
+        }
+        matchComponent._twitchValue += 1;
+    } else {
+        matchComponent._timeAnimation = 1.f;
+        auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
+        textMenuComponent._text = "Exiting ! Woops";
+
+        matchComponent.setAnimation(match_exitingPokeballAnimation, match_exitingPokeballAnimationFinished);
+    }
+}
+
+
+void match_launchPokeballAnimation(Entity match, float deltaTime)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+
+    Entity textMenu = coordinator->getEntityFromTag("textMenu");
+    auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
+    textMenuComponent._text = "Launch";
+}
+
+void match_launchPokeballAnimationFinished(Entity match)
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    auto &matchComponent = coordinator->getComponent<Match>(match);
+
+    Entity textMenu = coordinator->getEntityFromTag("textMenu");
+    auto &textMenuComponent = coordinator->getComponent<Text>(textMenu);
+    textMenuComponent._text = "Idle...";
+
+    match_throwPokeball();
+
+    match_showPokemonInfos();
+
+    matchComponent._timeAnimation = 1.f;
+    matchComponent.setAnimation(match_idlePokeballAnimation, match_idlePokeballAnimationFinished);
+}
+
+
+/*
+ * Attack animation
+ */
+
+
 void match_startAttackAnimation(Entity match, float deltaTime)
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
@@ -213,6 +357,11 @@ void match_startAttackAnimationFinished(Entity match)
 }
 
 
+/*
+ * New action sequence
+ */
+
+
 void new_actionSequence(Entity match)
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
@@ -231,23 +380,52 @@ void new_actionSequence(Entity match)
         textMenuComponent._text = "";
         std::cout << "End of the attack sequence !!!!!!" << std::endl;
 
+        bool pokemonAlive = false;
+        for (auto &pokemon : enemyTrainerComponent._pokemons) {
+            if (pokemon._id == -1)
+                continue;
+            if (pokemon._currentHP > 0 && !pokemon._isCaptured)
+                pokemonAlive = true;
+        }
+        if (!pokemonAlive)
+        {
+            std::cout << "You win!" << std::endl;
+            matchComponent.exitMatch();
+            return;
+        }
+
         matchComponent.enemyPokemonAction();
     }
     else
     {
-        //precalculate the attack
-        Entity trainerAttacking = std::get<0>(matchComponent._actions[0]);
-        Entity trainerDefending = std::get<1>(matchComponent._actions[0]);
-        auto &trainerAttackingComponent = coordinator->getComponent<Trainer>(trainerAttacking);
-        auto &trainerDefendingComponent = coordinator->getComponent<Trainer>(trainerDefending);
-        Attack attack = trainerAttackingComponent._pokemons[0]._attacks[std::get<3>(matchComponent._actions[0])];
+        int actionType = std::get<2>(matchComponent._actions[0]);
+        if (actionType == MATCH_ACTION_ATTACK) {
+            //attack
 
-        //TODO: calculate the damage
-        trainerDefendingComponent._pokemons[0]._pvFrom = trainerDefendingComponent._pokemons[0]._currentHP;
-        trainerDefendingComponent._pokemons[0]._pvToGo = trainerDefendingComponent._pokemons[0]._currentHP - attack._power;
+            //precalculate the attack
+            Entity trainerAttacking = std::get<0>(matchComponent._actions[0]);
+            Entity trainerDefending = std::get<1>(matchComponent._actions[0]);
+            auto &trainerAttackingComponent = coordinator->getComponent<Trainer>(trainerAttacking);
+            auto &trainerDefendingComponent = coordinator->getComponent<Trainer>(trainerDefending);
+            Attack attack = trainerAttackingComponent._pokemons[0]._attacks[std::get<3>(matchComponent._actions[0])];
 
-        matchComponent._timeAnimation = 1.f;
-        matchComponent.setAnimation(match_startAttackAnimation, match_startAttackAnimationFinished);
+            //TODO: calculate the damage
+            trainerDefendingComponent._pokemons[0]._pvFrom = trainerDefendingComponent._pokemons[0]._currentHP;
+            trainerDefendingComponent._pokemons[0]._pvToGo =
+                    trainerDefendingComponent._pokemons[0]._currentHP - attack._power;
+
+            matchComponent._timeAnimation = 1.f;
+            matchComponent.setAnimation(match_startAttackAnimation, match_startAttackAnimationFinished);
+        } else if (actionType == MATCH_ACTION_ITEM) {
+            //item
+            matchComponent._timeAnimation = 1.f;
+            matchComponent.setAnimation(match_itemUseAnimation, match_itemUseAnimationFinished);
+        } else if (actionType == MATCH_ACTION_POKEMON) {
+            //pokemon
+            matchComponent._timeAnimation = 1.f;
+            match_removePokemonInfos();
+            matchComponent.setAnimation(match_launchPokeballAnimation, match_launchPokeballAnimationFinished);
+        }
     }
 }
 

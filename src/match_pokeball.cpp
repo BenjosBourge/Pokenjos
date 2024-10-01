@@ -8,16 +8,17 @@
 #include "../include/components/match.hpp"
 #include "../include/matchMethods.hpp"
 #include "../include/core/myMath.hpp"
+#include "../include/components/pokemon.hpp"
+#include "../include/components/trainer.hpp"
 
-int match_getPokeballBaseChance(Entity pokemon, int catchBonus)
+int match_getPokeballBaseChance(Pokemon pokemon, int catchBonus)
 {
     std::shared_ptr<Coordinator> coordinator = getCoordinator();
-    auto &pokemonComponent = coordinator->getComponent<Pokemon>(pokemon);
 
     int baseCatchRate = 45;//TODO:pokemonComponent._baseCatchRate;
     int x = baseCatchRate * catchBonus;
-    x *= (3 * pokemonComponent._currentMaxHP - 2 * pokemonComponent._currentHP);
-    x /= (3 * pokemonComponent._currentMaxHP);
+    x *= (3 * pokemon._currentMaxHP - 2 * pokemon._currentHP);
+    x /= (3 * pokemon._currentMaxHP);
     x *= 1; //TODO:STATUS
 
     if (x > 255)
@@ -43,6 +44,7 @@ int match_getPokeballAlteredChance(int x)
 bool match_isPokeballCaught(int y)
 {
     int r = rand() % 65536;
+    std::cout << "r: " << r << " y: " << y << std::endl;
     return r <= y;
 }
 
@@ -52,5 +54,13 @@ void match_throwPokeball()
     Entity match = coordinator->getEntityFromTag("match");
     auto &matchComponent = coordinator->getComponent<Match>(match);
 
+    Entity trainerOpponent = matchComponent._trainersOpponent[0];
+    auto &trainerOpponentComponent = coordinator->getComponent<Trainer>(trainerOpponent);
+    Pokemon pokemon = trainerOpponentComponent._pokemons[0];
 
+    int x = match_getPokeballBaseChance(pokemon, 1); //no catch bonus, need the pokeball id
+    int y = match_getPokeballAlteredChance(x);
+
+    matchComponent._YCatchValue = y;
+    matchComponent._twitchValue = 0;
 }

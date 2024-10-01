@@ -245,6 +245,13 @@ void match_showAttacks(Entity button)
     }
 }
 
+void match_removeItemButtons()
+{
+    std::shared_ptr<Coordinator> coordinator = getCoordinator();
+    coordinator->removeEntitiesFromTag("menu_bag");
+    coordinator->removeEntitiesFromTag("item_menu");
+}
+
 void match_useItem(Entity button)
 {
     //TODO: use item became an action in the list of actions
@@ -254,20 +261,16 @@ void match_useItem(Entity button)
     Entity playerTrainer = coordinator->getEntityFromTag("player_trainer");
     auto &playerTrainerComponent = coordinator->getComponent<Trainer>(playerTrainer);
     auto &buttonComponent = coordinator->getComponent<UiButton>(button);
+    Entity enemyTrainer = matchComponent._trainersOpponent[0];
 
     std::cout << "Use item: " << buttonComponent._id << std::endl;
     if (matchComponent._itemCategory == 0) {//pokeball
-        std::cout << "Use pokeball" << std::endl;
-        match_throwPokeball();
+        matchComponent._actionsInQueue.push_back(std::make_tuple(playerTrainer, enemyTrainer, MATCH_ACTION_POKEMON, 0));
     } else {
-        std::cout << "Use potion" << std::endl;
-        playerTrainerComponent._pokemons[0]._currentHP += 20;
-        if (playerTrainerComponent._pokemons[0]._currentHP > playerTrainerComponent._pokemons[0]._currentMaxHP)
-            playerTrainerComponent._pokemons[0]._currentHP = playerTrainerComponent._pokemons[0]._currentMaxHP;
-        std::string lifebar_tag = "lifebar_" + std::to_string(playerTrainerComponent._id);
-        //TODO: any trainer can use potions
-        match_setLifeBarSize(coordinator->getEntityFromTag(lifebar_tag), playerTrainer);
+        matchComponent._actionsInQueue.push_back(std::make_tuple(playerTrainer, playerTrainer, MATCH_ACTION_ITEM, 0));
     }
+
+    match_removeItemButtons();
 }
 
 void match_showBagItems(int category)
